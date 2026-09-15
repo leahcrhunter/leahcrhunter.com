@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Talent Against Humanity</title>
+<meta name="description" content="A tongue-in-cheek Cards Against Humanity-style party game for anyone who's ever worked in recruitment or HR. Host a room, join from any device, play together." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="firefly-canvas-wrap" aria-hidden="true"><canvas id="firefly-canvas"></canvas></div>
+
+  <div id="banner" class="banner hidden" role="alert"></div>
+
+  <main id="app">
+
+    <!-- LANDING -->
+    <section id="screen-landing" class="screen">
+      <div class="brand">
+        <span class="brand-jar" aria-hidden="true">
+          <svg viewBox="0 0 60 76" width="40" height="50">
+            <rect x="8" y="22" width="44" height="46" rx="10" fill="none" stroke="#f4d58d" stroke-width="2" opacity="0.55"/>
+            <rect x="14" y="8" width="32" height="16" rx="4" fill="none" stroke="#f4d58d" stroke-width="2" opacity="0.55"/>
+            <circle class="firefly-dot" cx="30" cy="46" r="4" fill="#f4d58d"/>
+          </svg>
+        </span>
+        <h1>Talent Against Humanity</h1>
+      </div>
+      <p class="tagline">A Cards Against Humanity-style game for recruiters and HR folk</p>
+
+      <div class="landing-actions">
+        <button class="btn btn-primary" id="btn-go-host">Host a game</button>
+        <button class="btn btn-secondary" id="btn-go-join">Join a game</button>
+      </div>
+      <p class="fineprint">Works best with 3–8 players. Everyone needs their own device.</p>
+    </section>
+
+    <!-- HOST SETUP -->
+    <section id="screen-host-setup" class="screen hidden">
+      <button class="btn-back" data-back="landing">&larr; back</button>
+      <h2>Host a room</h2>
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" id="host-name" maxlength="18" placeholder="e.g. Leah" autocomplete="off" />
+      </label>
+      <button class="btn btn-primary" id="btn-create-room">Create room</button>
+      <p class="hint">You'll get a code to hand around. Keep this tab open — you're running the game.</p>
+    </section>
+
+    <!-- JOIN SETUP -->
+    <section id="screen-join-setup" class="screen hidden">
+      <button class="btn-back" data-back="landing">&larr; back</button>
+      <h2>Join a room</h2>
+      <label class="field">
+        <span>Room code</span>
+        <input type="text" id="join-code" maxlength="4" placeholder="ABCD" autocomplete="off" style="text-transform:uppercase" />
+      </label>
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" id="join-name" maxlength="18" placeholder="e.g. Sam" autocomplete="off" />
+      </label>
+      <button class="btn btn-primary" id="btn-join-room">Join room</button>
+    </section>
+
+    <!-- LOBBY -->
+    <section id="screen-lobby" class="screen hidden">
+      <h2>Room <span id="lobby-code" class="code-chip"></span></h2>
+      <p class="hint" id="lobby-hint">Waiting for players to join…</p>
+      <ul id="lobby-players" class="player-list"></ul>
+      <button class="btn btn-primary hidden" id="btn-start-game">Start game</button>
+      <p class="fineprint" id="lobby-host-note">Only the host can start the game.</p>
+    </section>
+
+    <!-- GAME -->
+    <section id="screen-game" class="screen hidden">
+      <div class="game-layout">
+        <aside class="scoreboard" id="scoreboard" aria-label="Scoreboard"></aside>
+
+        <div class="game-main">
+          <div class="round-meta">
+            <span id="judge-banner"></span>
+            <span id="sub-progress"></span>
+          </div>
+
+          <div class="black-card" id="black-card"></div>
+
+          <div id="phase-waiting-submit" class="phase-panel hidden">
+            <p class="phase-note">Pick your card below.</p>
+          </div>
+
+          <div id="phase-judging-wait" class="phase-panel hidden">
+            <p class="phase-note">You're judging this round — sit tight while everyone answers.</p>
+          </div>
+
+          <div id="phase-reveal-wait" class="phase-panel hidden">
+            <p class="phase-note" id="reveal-wait-text">Cards are in. Waiting on the judge's verdict…</p>
+          </div>
+
+          <div id="reveal-area" class="reveal-grid hidden"></div>
+
+          <div id="round-result-area" class="round-result hidden"></div>
+
+          <div id="hand-area" class="hand hidden"></div>
+
+          <button class="btn btn-primary hidden" id="btn-next-round">Next round</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME OVER -->
+    <section id="screen-gameover" class="screen hidden">
+      <h2 id="gameover-title"></h2>
+      <ol id="gameover-scores" class="final-scores"></ol>
+      <button class="btn btn-primary hidden" id="btn-play-again">Play again</button>
+      <p class="fineprint" id="gameover-note"></p>
+    </section>
+
+  </main>
+
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="cards.js"></script>
+  <script src="app.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>

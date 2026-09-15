@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Leah C. R. Hunter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html {
+    scroll-snap-type: y proximate;
+  }
+  html, body {
+    width: 100%;
+    background: #0a0a12;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  /* ---------- hero ---------- */
+  #hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    scroll-snap-align: start;
+  }
+  #scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .veil {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none; text-align: center; padding: 0 24px;
+  }
+  .greeting {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(244, 238, 224, 0.92);
+    font-size: clamp(1.6rem, 5vw, 2.9rem);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 2.8s ease, transform 2.8s ease;
+    text-shadow: 0 2px 22px rgba(0,0,0,0.5);
+  }
+  .greeting.show { opacity: 1; transform: translateY(0); }
+
+  .hint-stack {
+    position: absolute; bottom: 30px; left: 0; right: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    pointer-events: none;
+  }
+  .hint {
+    font-size: 0.75rem; color: rgba(244, 238, 224, 0.5); letter-spacing: 0.02em;
+    opacity: 0; transition: opacity 2s ease;
+  }
+  .hint.show { opacity: 1; }
+  .scroll-cue {
+    font-size: 0.7rem; color: rgba(244, 238, 224, 0.32); letter-spacing: 0.02em;
+    opacity: 0; transition: opacity 2s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .scroll-cue.show { opacity: 1; }
+  .scroll-cue svg { width: 12px; height: 8px; opacity: 0.6; }
+
+  .name-mark {
+    position: absolute; top: 26px; left: 28px;
+    font-size: 0.8rem; color: rgba(244, 238, 224, 0.45); letter-spacing: 0.02em;
+    opacity: 0; transition: opacity 2s ease; pointer-events: none;
+  }
+  .name-mark.show { opacity: 1; }
+
+  /* ---------- projects ---------- */
+  #projects {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: #0a0a12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    scroll-snap-align: start;
+  }
+  .projects-inner { max-width: 720px; width: 100%; text-align: center; }
+  .projects-label {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: rgba(244, 238, 224, 0.55);
+    margin-bottom: 48px;
+  }
+  .projects-grid {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 56px;
+  }
+
+  .project-icon {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    text-decoration: none; color: inherit;
+    transition: transform 0.35s ease;
+  }
+  .project-icon:hover, .project-icon:focus-visible { transform: translateY(-6px); }
+  .project-icon:focus-visible { outline: 2px solid rgba(244, 213, 141, 0.7); outline-offset: 6px; border-radius: 6px; }
+
+  .project-icon svg { width: 76px; height: 76px; }
+  .project-icon .glow-core { transition: opacity 0.35s ease; }
+  .project-icon:hover .glow-core, .project-icon:focus-visible .glow-core { opacity: 1; }
+
+  .project-name {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: rgba(244, 238, 224, 0.9);
+  }
+  .project-sub {
+    font-size: 0.7rem;
+    color: rgba(244, 238, 224, 0.4);
+    letter-spacing: 0.01em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .greeting, .hint, .scroll-cue, .name-mark, .project-icon { transition: opacity 0.6s ease, transform 0.2s ease; }
+  }
+</style>
+</head>
+<body>
+
+<section id="hero">
+  <canvas id="scene"></canvas>
+
+  <div class="name-mark" id="nameMark">leah c. r. hunter</div>
+  <div class="veil"><p class="greeting" id="greeting">hi, it's good to see you</p></div>
+  <div class="hint-stack">
+    <p class="hint" id="hint">they drift closer if you're still</p>
+    <p class="scroll-cue" id="scrollCue">
+      projects below
+      <svg viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="stroke: rgba(244,238,224,0.5)"/>
+      </svg>
+    </p>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="projects-inner">
+    <p class="projects-label">projects</p>
+    <div class="projects-grid">
+
+      <!-- shared jar filter/gradient, referenced by every jar below -->
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+          <filter id="jarGlow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="3.2" />
+          </filter>
+          <linearGradient id="jarGlass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f4eee0" stop-opacity="0.14" />
+            <stop offset="100%" stop-color="#f4eee0" stop-opacity="0.05" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <a class="project-icon" href="https://cv.leahcrhunter.com" aria-label="Visit CV site at cv.leahcrhunter.com">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <!-- wire bail handle -->
+          <path d="M24 14 C24 6, 40 6, 40 14" stroke="#c9c2ad" stroke-width="1.3" fill="none" stroke-linecap="round" />
+
+          <!-- lid -->
+          <rect x="21" y="10" width="22" height="7" rx="2.5" fill="#8a6a3f" stroke="#5f4a2a" stroke-width="1" />
+          <rect x="21" y="10" width="22" height="2.4" rx="1.2" fill="#a9865a" />
+
+          <!-- neck -->
+          <rect x="23" y="16" width="18" height="7" fill="url(#jarGlass)" stroke="#f4eee0" stroke-opacity="0.35" stroke-width="1" />
+
+          <!-- jar body -->
+          <path d="M17 23 H47 V47 C47 54.5, 40.7 58 32 58 C23.3 58, 17 54.5, 17 47 Z"
+                fill="url(#jarGlass)" stroke="#f4eee0" stroke-opacity="0.4" stroke-width="1.3" />
+
+          <!-- glass shine -->
+          <path d="M22 27 L22 49" stroke="#f4eee0" stroke-opacity="0.25" stroke-width="2" stroke-linecap="round" />
+
+          <!-- firefly glow -->
+          <circle class="glow-core" cx="32" cy="41" r="9" fill="#f4d58d" opacity="0.55" filter="url(#jarGlow)" />
+          <circle cx="32" cy="41" r="3.4" fill="#fff4d6" />
+        </svg>
+        <span class="project-name">cv</span>
+        <span class="project-sub">cv.leahcrhunter.com</span>
+      </a>
+
+      <a class="project-icon" href="https://cards.leahcrhunter.com" aria-label="Visit Talent Against Humanity at cards.leahcrhunter.com">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <!-- wire bail handle -->
+          <path d="M24 14 C24 6, 40 6, 40 14" stroke="#c9c2ad" stroke-width="1.3" fill="none" stroke-linecap="round" />
+
+          <!-- lid -->
+          <rect x="21" y="10" width="22" height="7" rx="2.5" fill="#8a6a3f" stroke="#5f4a2a" stroke-width="1" />
+          <rect x="21" y="10" width="22" height="2.4" rx="1.2" fill="#a9865a" />
+
+          <!-- neck -->
+          <rect x="23" y="16" width="18" height="7" fill="url(#jarGlass)" stroke="#f4eee0" stroke-opacity="0.35" stroke-width="1" />
+
+          <!-- jar body -->
+          <path d="M17 23 H47 V47 C47 54.5, 40.7 58 32 58 C23.3 58, 17 54.5, 17 47 Z"
+                fill="url(#jarGlass)" stroke="#f4eee0" stroke-opacity="0.4" stroke-width="1.3" />
+
+          <!-- glass shine -->
+          <path d="M22 27 L22 49" stroke="#f4eee0" stroke-opacity="0.25" stroke-width="2" stroke-linecap="round" />
+
+          <!-- firefly glow -->
+          <circle class="glow-core" cx="32" cy="41" r="9" fill="#f4d58d" opacity="0.55" filter="url(#jarGlow)" />
+          <circle cx="32" cy="41" r="3.4" fill="#fff4d6" />
+        </svg>
+        <span class="project-name">talent against humanity</span>
+        <span class="project-sub">cards.leahcrhunter.com</span>
+      </a>
+
+      <!-- future subdomains: duplicate a .project-icon block above -->
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  let W, H, DPR;
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  let stars = [];
+  function seedStars() {
+    stars = [];
+    const count = Math.floor((W * H) / 9000);
+    for (let i = 0; i < count; i++) {
+      stars.push({ x: rand(0, W), y: rand(0, H * 0.6), r: rand(0.4, 1.3), a: rand(0.15, 0.5) });
+    }
+  }
+
+  const pointer = { x: -999, y: -999, active: false };
+  function setPointer(e) {
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches && e.touches.length) {
+      pointer.x = e.touches[0].clientX - rect.left;
+      pointer.y = e.touches[0].clientY - rect.top;
+    } else {
+      pointer.x = e.clientX - rect.left;
+      pointer.y = e.clientY - rect.top;
+    }
+    pointer.active = true;
+  }
+  window.addEventListener('mousemove', setPointer);
+  window.addEventListener('mouseleave', () => { pointer.active = false; });
+  window.addEventListener('touchmove', setPointer, { passive: true });
+  window.addEventListener('touchstart', setPointer, { passive: true });
+
+  const FIREFLY_COUNT = 24;
+  let flies = [];
+  function makeFly() {
+    return {
+      x: rand(0, W), y: rand(H * 0.15, H * 0.92),
+      angle: rand(0, Math.PI * 2),
+      wander: rand(0, Math.PI * 2),
+      wanderSpeed: rand(0.003, 0.009),
+      speed: rand(0.15, 0.4),
+      r: rand(1.6, 2.8),
+      glowPhase: rand(0, Math.PI * 2),
+      glowSpeed: rand(0.015, 0.03)
+    };
+  }
+  function seedFlies() {
+    flies = [];
+    for (let i = 0; i < FIREFLY_COUNT; i++) flies.push(makeFly());
+  }
+
+  function updateFly(f, dt) {
+    f.wander += f.wanderSpeed * dt;
+    f.glowPhase += f.glowSpeed * dt;
+
+    const dx = f.x - pointer.x, dy = f.y - pointer.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const fleeRadius = 110;
+
+    let desired = f.angle + Math.sin(f.wander) * 0.3;
+    let speedMul = 1;
+    if (pointer.active && dist < fleeRadius) {
+      desired = Math.atan2(dy, dx);
+      speedMul = 1.8;
+    }
+
+    let diff = desired - f.angle;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    f.angle += diff * 0.04;
+
+    const s = reducedMotion ? f.speed * 0.3 : f.speed * speedMul;
+    f.x += Math.cos(f.angle) * s * dt * 0.5;
+    f.y += Math.sin(f.angle) * s * dt * 0.5;
+
+    const m = 20;
+    if (f.x < -m) f.x = W + m;
+    if (f.x > W + m) f.x = -m;
+    if (f.y < H * 0.1) f.y = H * 0.1;
+    if (f.y > H * 0.95) f.y = H * 0.95;
+  }
+
+  function drawFly(f) {
+    const glow = 0.5 + Math.sin(f.glowPhase) * 0.5;
+    const alpha = 0.25 + glow * 0.65;
+    const r = f.r * (1 + glow * 0.6);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r * 6);
+    g.addColorStop(0, `rgba(244, 213, 141, ${alpha * 0.9})`);
+    g.addColorStop(0.35, `rgba(244, 213, 141, ${alpha * 0.25})`);
+    g.addColorStop(1, 'rgba(244, 213, 141, 0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, r * 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = `rgba(255, 244, 214, ${Math.min(1, alpha + 0.2)})`;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawSky() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#0d1026');
+    g.addColorStop(0.5, '#1c1834');
+    g.addColorStop(0.8, '#2c2340');
+    g.addColorStop(1, '#241a2a');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    stars.forEach((s) => {
+      ctx.globalAlpha = s.a;
+      ctx.fillStyle = '#f4eee0';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+
+    const horizon = H * 0.86;
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    ctx.lineTo(0, horizon + H * 0.02);
+    ctx.quadraticCurveTo(W * 0.25, horizon - H * 0.03, W * 0.5, horizon + H * 0.015);
+    ctx.quadraticCurveTo(W * 0.75, horizon - H * 0.02, W, horizon);
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    ctx.fillStyle = '#0a0a12';
+    ctx.fill();
+  }
+
+  let prevTime = performance.now();
+  function loop(time) {
+    const dt = Math.min(2.2, (time - prevTime) / 16.67 || 1);
+    prevTime = time;
+
+    drawSky();
+    flies.forEach((f) => { updateFly(f, dt); drawFly(f); });
+
+    requestAnimationFrame(loop);
+  }
+
+  resize();
+  seedStars();
+  seedFlies();
+  window.addEventListener('resize', () => { resize(); seedStars(); });
+  requestAnimationFrame(loop);
+
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('nameMark').classList.add('show'), 400);
+    setTimeout(() => document.getElementById('greeting').classList.add('show'), 1400);
+    setTimeout(() => document.getElementById('hint').classList.add('show'), 3200);
+    setTimeout(() => document.getElementById('scrollCue').classList.add('show'), 3600);
+  });
+})();
+</script>
+
+</body>
+</html>

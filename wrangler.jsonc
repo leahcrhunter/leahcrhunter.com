@@ -1,0 +1,30 @@
+// One Worker serves every site in this repo. Each hostname maps to a folder under sites/.
+// To add a site: make a folder in sites/, add it to "SITES" below, add it to "routes".
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "leahcrhunter-com",
+  "compatibility_date": "2026-09-01",
+  "main": "src/index.js",
+  "workers_dev": false,
+
+  "assets": {
+    "directory": "./sites",
+    "binding": "ASSETS",
+    "run_worker_first": true    // let src/index.js rewrite the path before asset lookup
+  },
+
+  "vars": {
+    // hostname -> folder under sites/
+    "SITES": {
+      "leahcrhunter.com":       "home",
+      "cv.leahcrhunter.com":    "cv",
+      "cards.leahcrhunter.com": "talent-against-humanity"
+    }
+  },
+
+  "routes": [
+    { "pattern": "leahcrhunter.com",       "custom_domain": true },
+    { "pattern": "cv.leahcrhunter.com",    "custom_domain": true },
+    { "pattern": "cards.leahcrhunter.com", "custom_domain": true }
+  ]
+}

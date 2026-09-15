@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leah C. R. Hunter — Talent Scientist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FBFBF8;
+    --ink: #1C2420;
+    --ink-soft: #4A524C;
+    --pine: #2F6F5E;
+    --pine-tint: #EAF1EE;
+    --brass: #B08D57;
+    --line: #DCD9CE;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 28px 96px;
+  }
+
+  /* Nav */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(251,251,248,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+    z-index: 10;
+  }
+
+  .nav-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 16px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-name {
+    font-family: 'Newsreader', serif;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 22px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+
+  .nav-links a:hover { color: var(--pine); }
+
+  /* Hero */
+  header.hero {
+    padding: 64px 0 40px;
+  }
+
+  h1 {
+    font-family: 'Newsreader', serif;
+    font-weight: 500;
+    font-size: 46px;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+
+  .role {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--pine);
+    margin: 0 0 6px;
+  }
+
+  .tagline {
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    max-width: 480px;
+    margin: 0 0 22px;
+  }
+
+  .contact {
+    font-size: 14px;
+    color: var(--ink-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+  }
+
+  .contact a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .contact a:hover { color: var(--pine); border-color: var(--pine); }
+
+  /* Highlights strip */
+  .highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 56px;
+  }
+
+  .highlight-item {
+    background: var(--paper);
+    padding: 20px 16px;
+    text-align: left;
+    flex: 1 1 160px;
+  }
+
+  .highlight-number {
+    font-family: 'Newsreader', serif;
+    font-size: 28px;
+    color: var(--pine);
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .highlight-label {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  section { margin-bottom: 52px; }
+
+  h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    margin: 0 0 22px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .statement {
+    font-family: 'Newsreader', serif;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: 640px;
+  }
+
+  .statement .highlight { color: var(--pine); }
+
+  /* What I bring cards */
+  .bring-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 32px;
+  }
+
+  .bring-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+
+  .bring-card p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* Experience timeline */
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .entry { position: relative; margin-bottom: 32px; }
+  .entry:last-child { margin-bottom: 0; }
+
+  .entry::before {
+    content: "";
+    position: absolute;
+    left: -26px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--pine);
+  }
+
+  .entry.current::before {
+    background: var(--pine);
+  }
+
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin-bottom: 4px;
+  }
+
+  .entry-title {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .entry-org {
+    color: var(--pine);
+    font-weight: 500;
+  }
+
+  .entry-date {
+    font-size: 13px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .entry ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+  }
+
+  .entry li {
+    margin-bottom: 5px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+
+  /* Education */
+  .edu-entry { margin-bottom: 20px; }
+  .edu-entry:last-child { margin-bottom: 0; }
+  .edu-degree { font-weight: 600; font-size: 15.5px; }
+  .edu-meta { font-size: 14px; color: var(--ink-soft); margin-top: 2px; }
+  .edu-grade { color: var(--brass); font-weight: 600; }
+
+  /* Skills */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 40px;
+  }
+
+  .skill-group h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+
+  .skill-group ul {
+    margin: 0;
+    padding-left: 16px;
+  }
+
+  .skill-group li {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    line-height: 1.45;
+  }
+
+  /* Contact CTA */
+  .contact-cta {
+    background: var(--pine-tint);
+    border: 1px solid var(--line);
+    padding: 36px 32px;
+    text-align: left;
+  }
+
+  .contact-cta h2 {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .contact-cta p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 20px;
+    max-width: 460px;
+  }
+
+  .cta-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .cta-link {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--paper);
+    background: var(--pine);
+    padding: 10px 18px;
+    text-decoration: none;
+    border-radius: 3px;
+  }
+
+  .cta-link.secondary {
+    background: transparent;
+    color: var(--pine);
+    border: 1px solid var(--pine);
+  }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 620px) {
+    .page { padding: 0 20px 72px; }
+    .nav-inner { padding: 14px 20px; }
+    header.hero { padding: 44px 0 32px; }
+    h1 { font-size: 34px; }
+    .highlight-item { flex: 1 1 45%; }
+    .bring-grid, .skills-grid { grid-template-columns: 1fr; }
+    .entry-head { flex-direction: column; }
+    .nav-links { gap: 14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-name">Leah C. R. Hunter</span>
+    <div class="nav-links">
+      <a href="#experience">Experience</a>
+      <a href="#education">Education</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <header class="hero">
+    <h1>Leah C. R. Hunter</h1>
+    <p class="role">Talent Scientist</p>
+    <p class="tagline">Bridging psychology and data to help organisations understand and hire people well.</p>
+    <div class="contact">
+      <a href="mailto:leahhunter088@gmail.com">leahhunter088@gmail.com</a>
+      <span>07496 156947</span>
+      <span>Essex, UK</span>
+      <a href="https://www.linkedin.com/in/leah-hunter-38aaa621b/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </header>
+
+  <div class="highlights">
+    <div class="highlight-item">
+      <span class="highlight-number">2×</span>
+      <span class="highlight-label">First-Class Honours degrees (MSc &amp; BSc)</span>
+    </div>
+    <div class="highlight-item">
+      <span class="highlight-number">10</span>
+      <span class="highlight-label">Interviews conducted per week</span>
+    </div>
+    <div class="highlight-item">
+      <span class="highlight-number">12</span>
+      <span class="highlight-label">Hiring leads managed across multiple departments</span>
+    </div>
+    <div class="highlight-item">
+      <span class="highlight-number">MENSA</span>
+      <span class="highlight-label">Member since age 11</span>
+    </div>
+    <div class="highlight-item">
+      <span class="highlight-number" style="font-size: 20px;">International</span>
+      <span class="highlight-label">Research presented at a conference in Egypt</span>
+    </div>
+  </div>
+
+  <section>
+    <h2>Personal statement</h2>
+    <p class="statement">
+      As a <span class="highlight">Talent Scientist at Canonical</span>, I manage a team of 12 hiring leads and
+      apply evidence-based and data-driven methods to how we select our people. From SQL to JavaScript to
+      applying behavioural science, real data backs up my decision making and processes. My background in
+      Occupational and Organisational Psychology (MSc, University of Surrey) underpins this work, giving me a
+      grounded understanding of what actually drives good hiring decisions. Being a member of MENSA since age
+      11, I bring strong problem-solving instincts, adaptability, and a genuine curiosity about what makes
+      people and processes work well.
+    </p>
+  </section>
+
+  <section>
+    <h2>What I bring</h2>
+    <div class="bring-grid">
+      <div class="bring-card">
+        <h3>Data &amp; analysis</h3>
+        <p>Rapid learner with a strong mathematics background. Proficient in SPSS, Excel, SQL, and Python, with hands-on experience in regression, t-tests, factor analysis, and psychometric scale development.</p>
+      </div>
+      <div class="bring-card">
+        <h3>Presentation &amp; communication</h3>
+        <p>Experienced presenter, including at an international conference in Egypt to an audience of around 30. Comfortable communicating complex ideas to both technical and general audiences.</p>
+      </div>
+      <div class="bring-card">
+        <h3>Team working</h3>
+        <p>Years of collaborative experience through societies and group projects. Practised in active listening, respecting diverse viewpoints, and resolving conflict, while keeping outcomes and people both on track.</p>
+      </div>
+      <div class="bring-card">
+        <h3>Organisation</h3>
+        <p>Builds detailed, time-boxed to-do lists and schedules work well ahead of deadlines. Proactive about spotting issues early, keeping projects on track without last-minute surprises.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <h2>Experience</h2>
+    <div class="timeline">
+
+      <div class="entry current">
+        <div class="entry-head">
+          <div><span class="entry-title">Talent Scientist</span> — <span class="entry-org">Canonical</span></div>
+          <div class="entry-date">Oct 2025 – Present</div>
+        </div>
+        <ul>
+          <li>Manage a team of 12 hiring leads, coordinating and overseeing hiring across multiple departments.</li>
+          <li>Conduct around 10 interviews per week.</li>
+          <li>Apply behavioural interview techniques and psychometric assessment to support evidence-based hiring across a fully distributed, global organisation.</li>
+          <li>Use SQL and Python to analyse people data and surface insights that inform hiring strategy and process improvements.</li>
+          <li>Partner with senior stakeholders to keep hiring targets on track and design solutions to complex selection challenges.</li>
+          <li>Contribute to documentation and process efficiencies supporting Canonical's talent acquisition pipeline.</li>
+          <li>Support ticket-based queries across hiring systems, building deep operational knowledge of Canonical's talent platforms.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <div><span class="entry-title">SEND Tutor</span> — <span class="entry-org">DegreeSix</span></div>
+          <div class="entry-date">Sept 2022 – Jan 2024</div>
+        </div>
+        <ul>
+          <li>Mentored high-risk and neurodivergent individuals, developing crisis management, proactive decision-making, and adaptability skills.</li>
+          <li>Balanced responsibilities with academic commitments through strong organisation and attention to detail.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <div><span class="entry-title">Research Assistant</span> — <span class="entry-org">Coventry University</span></div>
+          <div class="entry-date">Sept 2021 – Jul 2024</div>
+        </div>
+        <ul>
+          <li>Invited to assist on a doctoral research project, running high-complexity experiments and coordinating participants.</li>
+          <li>Gained advanced data entry experience and strengthened technical, interpersonal, and leadership skills.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <div><span class="entry-title">Mathematics Teacher</span> — <span class="entry-org">Brentwood School</span></div>
+          <div class="entry-date">Jan 2018 – Jul 2019</div>
+        </div>
+        <ul>
+          <li>Assisted with after-school maths tutoring, fostering a positive learning environment.</li>
+          <li>Developed communication skills, explaining complex ideas clearly and effectively.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="education">
+    <h2>Education</h2>
+
+    <div class="edu-entry">
+      <div class="edu-degree">MSc (Hons) Occupational and Organisational Psychology — <span class="edu-grade">First Class</span></div>
+      <div class="edu-meta">University of Surrey · Sept 2024 – Sept 2025</div>
+    </div>
+
+    <div class="edu-entry">
+      <div class="edu-degree">BSc (Hons) Forensic Psychology — <span class="edu-grade">First Class</span></div>
+      <div class="edu-meta">Coventry University · Sept 2021 – Jul 2024</div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <h2>Skills</h2>
+    <div class="skills-grid">
+
+      <div class="skill-group">
+        <h3>Data & analysis</h3>
+        <ul>
+          <li>SQL & JavaScript — core tools for analysing people data and driving hiring insights at Canonical</li>
+          <li>dbt — data transformation and modelling</li>
+          <li>Superset — data exploration and dashboarding</li>
+          <li>Dashboarding — building reporting views for hiring metrics</li>
+          <li>Google Apps Script — automating recurring reporting tasks</li>
+          <li>Greenhouse — applicant tracking and hiring workflow management</li>
+          <li>VS Code</li>
+          <li>Regression, t-tests, factor analysis</li>
+          <li>Excel — charts, formatting, conditional logic</li>
+          <li>R — ongoing independent certification</li>
+          <li>SPSS — core and advanced statistical techniques, including psychometric scale development</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <h3>Microsoft & tools</h3>
+        <ul>
+          <li>Excel — charts, graphs, cell and conditional formatting</li>
+          <li>PowerPoint & Word — presentations, leaflets, posters</li>
+          <li>Graphics creation and picture editing</li>
+          <li>Thomas psychometrics — psychometric assessment platform</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <h3>Interpersonal</h3>
+        <ul>
+          <li>Emotional intelligence — reading individual and group dynamics to build trust with candidates and hiring leads</li>
+          <li>Adaptability — moving fluidly between tutoring, research, and fast-paced hiring environments</li>
+          <li>Persuasion — influencing stakeholder decisions and aligning teams around evidence-based hiring practices</li>
+          <li>Stakeholder management — partnering closely with senior leaders to keep hiring targets on track</li>
+          <li>Active listening & conflict resolution — built through years of collaborative team and group work</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <h3>Other certifications</h3>
+        <ul>
+          <li>Adobe Certified Professional in Graphic Design &amp; Illustration Using Adobe Illustrator</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="contact-cta">
+      <h2>Get in touch</h2>
+      <p>Happy to talk about talent science, psychology in the workplace, or anything data and hiring related.</p>
+      <div class="cta-links">
+        <a class="cta-link" href="mailto:leahhunter088@gmail.com">Email me</a>
+        <a class="cta-link secondary" href="tel:07496156947">Call: 07496 156947</a>
+        <a class="cta-link secondary" href="https://www.linkedin.com/in/leah-hunter-38aaa621b/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    References available on request.
+  </footer>
+
+</div>
+</body>
+</html>

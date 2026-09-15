@@ -1,0 +1,3 @@
+# Files inside sites/ that should not be served publicly.
+.gitignore
+README.md
