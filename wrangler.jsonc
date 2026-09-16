@@ -18,13 +18,15 @@
     "SITES": {
       "leahcrhunter.com":       "home",
       "cv.leahcrhunter.com":    "cv",
-      "cards.leahcrhunter.com": "talent-against-humanity"
+      "cards.leahcrhunter.com": "talent-against-humanity",
+      "board.leahcrhunter.com": "corkboard"
     }
   },
 
   "routes": [
     { "pattern": "leahcrhunter.com",       "custom_domain": true },
     { "pattern": "cv.leahcrhunter.com",    "custom_domain": true },
-    { "pattern": "cards.leahcrhunter.com", "custom_domain": true }
+    { "pattern": "cards.leahcrhunter.com", "custom_domain": true },
+    { "pattern": "board.leahcrhunter.com", "custom_domain": true }
   ]
 }

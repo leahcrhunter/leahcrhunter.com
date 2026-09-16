@@ -9,6 +9,7 @@ them, picking the folder by hostname.
 | `sites/home/`                     | https://leahcrhunter.com         | Landing page (fireflies)            |
 | `sites/cv/`                       | https://cv.leahcrhunter.com      | CV                                  |
 | `sites/talent-against-humanity/`  | https://cards.leahcrhunter.com   | Cards-Against-Humanity-style game — see its own [README](sites/talent-against-humanity/README.md) |
+| `sites/corkboard/`                | https://board.leahcrhunter.com   | Interactive corkboard: notes, lists, photos, stickers — see its [README](sites/corkboard/README.md) |
 
 All plain HTML/CSS/JS — no build step, no dependencies.
 

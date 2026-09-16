@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>corkboard</title>
+<meta name="description" content="A little corkboard for notes, lists, photos and stickers — with fairy lights." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="firefly-canvas-wrap" aria-hidden="true"><canvas id="firefly-canvas"></canvas></div>
+
+  <header class="topbar">
+    <a class="home-link" href="https://leahcrhunter.com">leah c. r. hunter</a>
+    <h1>corkboard</h1>
+    <p class="topbar-hint" id="status-hint">saved in this browser</p>
+  </header>
+
+  <div id="banner" class="banner hidden" role="alert"></div>
+
+  <main id="board-wrap">
+    <div id="board-scale">
+      <div id="board" aria-label="Corkboard">
+        <!-- fairy lights are drawn into this svg by app.js -->
+        <svg id="lights" class="lights" aria-hidden="true"></svg>
+        <div id="items"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- floating tray of tools -->
+  <nav class="tray" aria-label="Add things to the board">
+    <button class="tool" data-add="note" title="Add a note">
+      <span class="tool-icon tool-note"></span><span class="tool-label">note</span>
+    </button>
+    <button class="tool" data-add="list" title="Add a to-do list">
+      <span class="tool-icon tool-list"><i></i><i></i><i></i></span><span class="tool-label">list</span>
+    </button>
+    <button class="tool" data-add="photo" title="Pin a photo">
+      <span class="tool-icon tool-photo"></span><span class="tool-label">photo</span>
+    </button>
+    <button class="tool" data-add="sticker" title="Add a sticker">
+      <span class="tool-icon tool-sticker">✨</span><span class="tool-label">sticker</span>
+    </button>
+    <span class="tray-divider" aria-hidden="true"></span>
+    <button class="tool tool-small" id="btn-export" title="Download the board as a file">save file</button>
+    <button class="tool tool-small" id="btn-import" title="Load a board from a file">load file</button>
+    <button class="tool tool-small tool-danger" id="btn-clear" title="Take everything down">clear</button>
+  </nav>
+
+  <!-- sticker picker -->
+  <div id="sticker-picker" class="picker hidden" role="dialog" aria-label="Pick a sticker">
+    <div class="picker-grid" id="sticker-grid"></div>
+  </div>
+
+  <input type="file" id="file-photo" accept="image/*" class="visually-hidden" />
+  <input type="file" id="file-import" accept="application/json,.json" class="visually-hidden" />
+
+  <script src="app.js"></script>
+</body>
+</html>
