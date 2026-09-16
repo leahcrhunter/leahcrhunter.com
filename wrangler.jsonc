@@ -19,7 +19,8 @@
       "leahcrhunter.com":       "home",
       "cv.leahcrhunter.com":    "cv",
       "cards.leahcrhunter.com": "talent-against-humanity",
-      "board.leahcrhunter.com": "corkboard"
+      "board.leahcrhunter.com": "corkboard",
+      "ocean.leahcrhunter.com": "ocean"
     }
   },
 
@@ -27,6 +28,7 @@
     { "pattern": "leahcrhunter.com",       "custom_domain": true },
     { "pattern": "cv.leahcrhunter.com",    "custom_domain": true },
     { "pattern": "cards.leahcrhunter.com", "custom_domain": true },
-    { "pattern": "board.leahcrhunter.com", "custom_domain": true }
+    { "pattern": "board.leahcrhunter.com", "custom_domain": true },
+    { "pattern": "ocean.leahcrhunter.com", "custom_domain": true }
   ]
 }

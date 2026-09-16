@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Five Factor Snapshot — Leah C. R. Hunter</title>
+<meta name="description" content="A short, evidence-based self-reflection tool built on the Big Five (OCEAN) model of personality.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* dusk sky gradient stops, same family as the landing page */
+    --sky-1:#0d1026;
+    --sky-2:#1c1834;
+    --sky-3:#2c2340;
+    --sky-4:#241a2a;
+    --ground:#0a0a12;
+
+    --cream:rgba(244,238,224,0.92);
+    --cream-soft:rgba(244,238,224,0.62);
+    --cream-faint:rgba(244,238,224,0.14);
+
+    --gold:#f4d58d;
+    --gold-glint:#fff4d6;
+    --gold-dim:rgba(244,213,141,0.16);
+    --gold-dim-2:rgba(244,213,141,0.32);
+
+    --panel:rgba(244,238,224,0.05);
+    --panel-strong:rgba(244,238,224,0.08);
+    --line:rgba(244,238,224,0.16);
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    color:var(--cream);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, var(--sky-3) 0%, transparent 70%),
+      linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 38%, var(--sky-3) 72%, var(--sky-4) 100%);
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  #firefly-bg{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:720px;
+    padding:56px 24px 80px;
+    flex:1;
+    position:relative;
+    z-index:1;
+  }
+
+  h1,h2,h3{
+    font-family:'Newsreader', serif;
+    font-weight:500;
+    margin:0;
+    color:var(--cream);
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Sans', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    font-size:11px;
+    font-weight:600;
+    color:var(--gold);
+    margin:0 0 14px;
+  }
+
+  a{ color:var(--gold); }
+
+  /* ---------- top nav ---------- */
+  .topnav{
+    width:100%;
+    max-width:720px;
+    padding:24px 24px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-size:13px;
+    color:var(--cream-soft);
+    position:relative;
+    z-index:1;
+  }
+  .topnav .name{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:15px;
+    color:var(--cream);
+  }
+  .topnav a{ text-decoration:none; color:var(--gold); }
+  .topnav a:hover{ text-decoration:underline; }
+
+  /* ---------- screens ---------- */
+  .screen{ display:none; }
+  .screen.active{ display:block; animation:fadein 0.35s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- intro ---------- */
+  .intro h1{ font-size:clamp(32px, 5vw, 44px); line-height:1.15; margin-bottom:18px; }
+  .intro .lede{
+    font-size:17px;
+    line-height:1.65;
+    color:var(--cream-soft);
+    max-width:560px;
+    margin-bottom:20px;
+  }
+  .facts{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px;
+    margin:32px 0 34px;
+  }
+  .fact{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 14px;
+    background:var(--panel);
+    backdrop-filter:blur(2px);
+  }
+  .fact .num{
+    font-family:'Newsreader', serif;
+    font-size:22px;
+    color:var(--gold);
+    display:block;
+  }
+  .fact .label{
+    font-size:12px;
+    color:var(--cream-soft);
+    margin-top:2px;
+  }
+  .disclaimer{
+    font-size:13px;
+    color:var(--cream-soft);
+    border-left:2px solid var(--gold-dim-2);
+    padding-left:14px;
+    margin:28px 0 36px;
+    line-height:1.6;
+  }
+
+  .btn{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    background:var(--gold);
+    color:var(--sky-1);
+    border:none;
+    padding:14px 26px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background 0.15s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow:0 0 18px rgba(244,213,141,0.28);
+  }
+  .btn:hover{ background:var(--gold-glint); box-shadow:0 0 24px rgba(244,213,141,0.45); }
+  .btn:active{ transform:scale(0.98); }
+  .btn.ghost{
+    background:transparent;
+    color:var(--gold);
+    border:1px solid var(--gold-dim-2);
+    box-shadow:none;
+  }
+  .btn.ghost:hover{ background:var(--gold-dim); box-shadow:none; }
+  .btn[disabled]{ opacity:0.35; cursor:not-allowed; }
+
+  /* ---------- quiz ---------- */
+  .progress-track{
+    height:4px;
+    width:100%;
+    background:var(--cream-faint);
+    border-radius:2px;
+    margin-bottom:40px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--gold);
+    width:0%;
+    transition:width 0.35s ease;
+    box-shadow:0 0 8px rgba(244,213,141,0.6);
+  }
+  .q-index{
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--cream-soft);
+    margin-bottom:16px;
+  }
+  .q-text{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:clamp(22px, 3.4vw, 28px);
+    line-height:1.4;
+    margin-bottom:36px;
+    min-height:110px;
+    color:var(--cream);
+  }
+  .likert{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+    margin-bottom:32px;
+  }
+  .likert-opt{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    padding:6px 2px 0;
+  }
+  .likert-dot{
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    border:1.5px solid var(--gold-dim-2);
+    background:transparent;
+    transition:all 0.15s ease;
+  }
+  .likert-opt:nth-child(1) .likert-dot,
+  .likert-opt:nth-child(5) .likert-dot{ width:30px; height:30px; }
+  .likert-opt:hover .likert-dot{ border-color:var(--gold); }
+  .likert-opt.selected .likert-dot{
+    background:var(--gold);
+    border-color:var(--gold);
+    box-shadow:0 0 14px 4px rgba(244,213,141,0.55);
+  }
+  .likert-label{
+    font-size:11.5px;
+    text-align:center;
+    color:var(--cream-soft);
+    line-height:1.3;
+    max-width:72px;
+  }
+  .quiz-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .link-btn{
+    font-size:13px;
+    color:var(--cream-soft);
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-family:'IBM Plex Sans', sans-serif;
+  }
+  .link-btn:hover{ color:var(--cream); }
+
+  /* ---------- results ---------- */
+  .results h1{ font-size:clamp(28px, 4.4vw, 38px); margin-bottom:8px; }
+  .results .lede{ color:var(--cream-soft); font-size:15px; margin-bottom:36px; }
+
+  .chart-wrap{
+    display:flex;
+    justify-content:center;
+    margin-bottom:8px;
+  }
+  #radar{ max-width:100%; }
+
+  .trait-cards{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin-top:36px;
+  }
+  .trait-card{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:20px 22px;
+    background:var(--panel);
+    backdrop-filter:blur(2px);
+  }
+  .trait-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+  }
+  .trait-name{
+    font-family:'Newsreader', serif;
+    font-size:19px;
+    color:var(--cream);
+  }
+  .trait-score{
+    font-size:12px;
+    color:var(--gold);
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .trait-bar-track{
+    height:6px;
+    background:var(--cream-faint);
+    border-radius:3px;
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .trait-bar-fill{
+    height:100%;
+    background:var(--gold);
+    border-radius:3px;
+    box-shadow:0 0 6px rgba(244,213,141,0.5);
+  }
+  .trait-desc{
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--cream-soft);
+    margin:0;
+  }
+
+  .results-actions{
+    display:flex;
+    gap:12px;
+    margin-top:40px;
+    flex-wrap:wrap;
+  }
+
+  footer.disc{
+    font-size:12.5px;
+    color:var(--cream-soft);
+    text-align:center;
+    max-width:520px;
+    margin:56px auto 0;
+    line-height:1.6;
+    opacity:0.85;
+  }
+
+  @media (max-width:520px){
+    .facts{ grid-template-columns:repeat(3,1fr); gap:8px; }
+    .fact{ padding:12px 8px; }
+    .likert-label{ display:none; }
+    .likert-opt:first-child .likert-label,
+    .likert-opt:last-child .likert-label{ display:block; font-size:10px; }
+    .q-text{ min-height:auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .screen.active{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="firefly-bg"></canvas>
+
+<div class="topnav">
+  <span class="name">leah c. r. hunter</span>
+  <a href="https://leahcrhunter.com">← back home</a>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="screen active" id="screen-intro">
+    <p class="eyebrow">Talent Science · Self-reflection tool</p>
+    <h1>The Five Factor Snapshot</h1>
+    <p class="lede">
+      A short self-assessment built on the Big Five (OCEAN) model — the framework
+      most widely used in psychological research to describe personality, and one
+      I use professionally in evidence-based hiring. Answer honestly, based on how
+      you generally are, not how you'd like to be.
+    </p>
+
+    <div class="facts">
+      <div class="fact"><span class="num">30</span><span class="label">statements</span></div>
+      <div class="fact"><span class="num">~3</span><span class="label">minutes</span></div>
+      <div class="fact"><span class="num">5</span><span class="label">traits scored</span></div>
+    </div>
+
+    <div class="disclaimer">
+      This is a self-reflection tool for personal interest, built for this portfolio —
+      not a clinical, diagnostic, or validated psychometric instrument. It won't be
+      used to make decisions about you, and your answers stay in your browser; nothing
+      is sent or stored anywhere.
+    </div>
+
+    <button class="btn" id="start-btn">Begin the snapshot</button>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="screen" id="screen-quiz">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <p class="q-index" id="q-index">Question 1 of 30</p>
+    <p class="q-text" id="q-text">…</p>
+
+    <div class="likert" id="likert-row">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="quiz-nav">
+      <button class="link-btn" id="back-btn">← back</button>
+      <button class="link-btn" id="skip-btn" style="visibility:hidden;">skip</button>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="screen" id="screen-results">
+    <p class="eyebrow">Your results</p>
+    <h1>Your Five Factor Snapshot</h1>
+    <p class="lede">
+      Each axis below runs from 1 (low) to 5 (high). No score is "good" or "bad" —
+      the Big Five describes tendencies, not verdicts.
+    </p>
+
+    <div class="chart-wrap">
+      <canvas id="radar" width="440" height="440"></canvas>
+    </div>
+
+    <div class="trait-cards" id="trait-cards"><!-- populated by JS --></div>
+
+    <div class="results-actions">
+      <button class="btn ghost" id="retake-btn">Retake the snapshot</button>
+    </div>
+
+    <footer class="disc">
+      Built on the Big Five / OCEAN model of personality (Openness, Conscientiousness,
+      Extraversion, Agreeableness, and Emotional Stability — the inverse of
+      Neuroticism). This short-form version is for self-reflection and portfolio
+      purposes only, and isn't a substitute for a validated psychometric assessment.
+    </footer>
+  </section>
+
+</div>
+
+<script>
+// ================= firefly ambient background =================
+(function(){
+  const canvas = document.getElementById('firefly-bg');
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let w, h, dpr;
+  function resize(){
+    dpr = window.devicePixelRatio || 1;
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COUNT = 20;
+  const flies = [];
+  for (let i=0; i<COUNT; i++){
+    flies.push({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random()-0.5) * 0.00028,
+      vy: (Math.random()-0.5) * 0.00028,
+      r: 1.4 + Math.random()*1.6,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.008 + Math.random()*0.014,
+    });
+  }
+
+  let t = 0;
+  function tick(){
+    t += 1;
+    ctx.clearRect(0, 0, w, h);
+
+    flies.forEach(f=>{
+      if (!reduceMotion){
+        f.x += f.vx;
+        f.y += f.vy;
+        if (f.x < -0.02) f.x = 1.02;
+        if (f.x > 1.02) f.x = -0.02;
+        if (f.y < -0.02) f.y = 1.02;
+        if (f.y > 1.02) f.y = -0.02;
+      }
+      const glow = 0.35 + 0.65 * (0.5 + 0.5*Math.sin(f.phase + t*f.speed));
+      const px = f.x * w;
+      const py = f.y * h;
+      const r = f.r;
+
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, r*7);
+      grad.addColorStop(0, `rgba(244,213,141,${0.85*glow})`);
+      grad.addColorStop(0.4, `rgba(244,213,141,${0.28*glow})`);
+      grad.addColorStop(1, 'rgba(244,213,141,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(px, py, r*7, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(255,244,214,${0.9*glow})`;
+      ctx.beginPath();
+      ctx.arc(px, py, r*0.6, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ================= quiz app =================
+(function(){
+
+  // ---------- data ----------
+  const TRAITS = {
+    O: { name:"Openness",             short:"O" },
+    C: { name:"Conscientiousness",    short:"C" },
+    E: { name:"Extraversion",         short:"E" },
+    A: { name:"Agreeableness",        short:"A" },
+    S: { name:"Emotional Stability",  short:"S" },
+  };
+
+  // 30 statements, 6 per trait (4 forward, 2 reverse-scored), interleaved for presentation
+  const RAW = {
+    O: [
+      { t:"I enjoy exploring new ideas, even if they overturn how I usually think.", r:false },
+      { t:"I'm drawn to abstract or philosophical conversations.", r:false },
+      { t:"I like trying activities or cuisines I've never experienced before.", r:false },
+      { t:"I get bored quickly with topics that don't spark my curiosity.", r:false },
+      { t:"I prefer familiar routines over unpredictable ones.", r:true },
+      { t:"I'd rather stick to tried-and-tested methods than experiment.", r:true },
+    ],
+    C: [
+      { t:"I plan tasks well ahead of their deadlines.", r:false },
+      { t:"I keep my belongings and schedule well organised.", r:false },
+      { t:"I follow through on commitments even when my motivation dips.", r:false },
+      { t:"I notice small errors that other people tend to miss.", r:false },
+      { t:"I often leave things until the last minute.", r:true },
+      { t:"I find it hard to stick to a plan once I've made one.", r:true },
+    ],
+    E: [
+      { t:"I feel energised after spending time with a group of people.", r:false },
+      { t:"I'm usually the one who starts conversations in a new setting.", r:false },
+      { t:"I enjoy being the centre of attention occasionally.", r:false },
+      { t:"I find it easy to speak up in group discussions.", r:false },
+      { t:"I prefer quiet, solitary evenings over social gatherings.", r:true },
+      { t:"I need a lot of alone time to recharge after socialising.", r:true },
+    ],
+    A: [
+      { t:"I go out of my way to make other people feel comfortable.", r:false },
+      { t:"I generally assume people have good intentions.", r:false },
+      { t:"I find it easy to sympathise with other people's problems.", r:false },
+      { t:"I enjoy cooperating with others more than competing with them.", r:false },
+      { t:"I'll bluntly point out flaws in someone's idea, even if it stings.", r:true },
+      { t:"I get impatient with people who slow me down.", r:true },
+    ],
+    S: [
+      { t:"I stay calm under pressure.", r:false },
+      { t:"Small setbacks rarely throw off my mood for long.", r:false },
+      { t:"I rarely worry about things that might go wrong.", r:false },
+      { t:"I recover quickly after an argument or disagreement.", r:false },
+      { t:"I get stressed out easily.", r:true },
+      { t:"My mood can shift quickly when things don't go to plan.", r:true },
+    ],
+  };
+
+  // build interleaved question order: round-robin across traits
+  const ORDER = ["O","C","E","A","S"];
+  const QUESTIONS = [];
+  for (let i=0; i<6; i++){
+    ORDER.forEach(trait=>{
+      QUESTIONS.push({ trait, text: RAW[trait][i].t, reverse: RAW[trait][i].r });
+    });
+  }
+
+  const LIKERT_LABELS = ["Strongly\ndisagree","Disagree","Neutral","Agree","Strongly\nagree"];
+
+  const BANDS = [
+    { max:1.8, label:"Very low" },
+    { max:2.6, label:"Low" },
+    { max:3.4, label:"Moderate" },
+    { max:4.2, label:"High" },
+    { max:5.01, label:"Very high" },
+  ];
+
+  const DESCRIPTIONS = {
+    O: {
+      "Very low":"You value the tried-and-tested. Novelty for its own sake doesn't excite you much — you'd rather perfect what already works than chase something new.",
+      "Low":"You lean practical. New ideas are welcome once they've earned their place.",
+      "Moderate":"You're pragmatic about novelty — open to new ideas when they're useful, comfortable with routine the rest of the time.",
+      "High":"You're drawn to ideas, possibilities and variety. Curiosity is a steady undercurrent in how you approach the world.",
+      "Very high":"Novelty and imagination genuinely energise you. You actively seek out new perspectives, ideas and experiences.",
+    },
+    C: {
+      "Very low":"Structure isn't your natural mode — you tend to work in bursts and adapt on the fly rather than plan far ahead.",
+      "Low":"You're flexible about planning, preferring to stay responsive rather than locked into a schedule.",
+      "Moderate":"You balance planning with flexibility — organising what matters, staying loose on the rest.",
+      "High":"You're dependable and organised, and you tend to follow through on what you commit to.",
+      "Very high":"Discipline and structure come naturally to you — deadlines, detail and follow-through are second nature.",
+    },
+    E: {
+      "Very low":"You recharge in solitude and tend to favour depth over breadth in your social life.",
+      "Low":"You enjoy people in smaller doses, gravitating toward quieter, more intimate settings.",
+      "Moderate":"You move comfortably between social energy and solo time, depending on the moment.",
+      "High":"You draw energy from other people, and you're often the one who gets a room talking.",
+      "Very high":"Social energy is your fuel — you actively seek out people, conversation and stimulation.",
+    },
+    A: {
+      "Very low":"You prioritise honesty and your own judgement over smoothing things over, even when it ruffles feathers.",
+      "Low":"You're willing to disagree or push back when it matters, rather than defaulting to harmony.",
+      "Moderate":"You balance warmth with directness — cooperative, but not afraid to hold your ground.",
+      "High":"You're warm, trusting and cooperative, generally assuming the best in people.",
+      "Very high":"Empathy and cooperation run deep for you — other people's comfort genuinely matters.",
+    },
+    S: {
+      "Very low":"Life's ups and downs tend to land hard, and stress can be felt intensely. That's a normal way some people are wired, not a flaw — and it's worth building in support for the moments that hit hardest.",
+      "Low":"You feel things vividly, and setbacks can linger a little longer than you'd like before settling.",
+      "Moderate":"You have a fairly even keel, with the occasional wobble under real pressure.",
+      "High":"You tend to stay steady under stress, and setbacks don't throw you off for long.",
+      "Very high":"You're notably calm and even-keeled, rarely rattled by pressure or surprises.",
+    },
+  };
+
+  // ---------- state ----------
+  const answers = new Array(QUESTIONS.length).fill(null);
+  let current = 0;
+
+  // ---------- elements ----------
+  const screenIntro = document.getElementById('screen-intro');
+  const screenQuiz = document.getElementById('screen-quiz');
+  const screenResults = document.getElementById('screen-results');
+
+  const qIndexEl = document.getElementById('q-index');
+  const qTextEl = document.getElementById('q-text');
+  const likertRow = document.getElementById('likert-row');
+  const progressFill = document.getElementById('progress-fill');
+  const backBtn = document.getElementById('back-btn');
+
+  function showScreen(el){
+    [screenIntro, screenQuiz, screenResults].forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // ---------- quiz rendering ----------
+  function renderQuestion(){
+    const q = QUESTIONS[current];
+    qIndexEl.textContent = `Question ${current+1} of ${QUESTIONS.length}`;
+    qTextEl.textContent = q.text;
+    progressFill.style.width = ((current)/QUESTIONS.length*100) + '%';
+    backBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+
+    likertRow.innerHTML = '';
+    for (let v=1; v<=5; v++){
+      const opt = document.createElement('div');
+      opt.className = 'likert-opt';
+      if (answers[current] === v) opt.classList.add('selected');
+      opt.innerHTML = `<div class="likert-dot"></div><div class="likert-label">${LIKERT_LABELS[v-1].replace('\n','<br>')}</div>`;
+      opt.addEventListener('click', ()=> selectAnswer(v));
+      likertRow.appendChild(opt);
+    }
+  }
+
+  function selectAnswer(value){
+    answers[current] = value;
+    renderQuestion();
+    setTimeout(()=>{
+      if (current < QUESTIONS.length - 1){
+        current++;
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }, 220);
+  }
+
+  backBtn.addEventListener('click', ()=>{
+    if (current > 0){
+      current--;
+      renderQuestion();
+    }
+  });
+
+  document.getElementById('start-btn').addEventListener('click', ()=>{
+    current = 0;
+    renderQuestion();
+    showScreen(screenQuiz);
+  });
+
+  document.getElementById('retake-btn').addEventListener('click', ()=>{
+    answers.fill(null);
+    current = 0;
+    renderQuestion();
+    showScreen(screenIntro);
+  });
+
+  // ---------- scoring ----------
+  function computeScores(){
+    const sums = { O:0, C:0, E:0, A:0, S:0 };
+    const counts = { O:0, C:0, E:0, A:0, S:0 };
+    QUESTIONS.forEach((q, i)=>{
+      let v = answers[i] ?? 3;
+      if (q.reverse) v = 6 - v;
+      sums[q.trait] += v;
+      counts[q.trait] += 1;
+    });
+    const scores = {};
+    Object.keys(sums).forEach(k=>{
+      scores[k] = sums[k] / counts[k];
+    });
+    return scores;
+  }
+
+  function bandFor(score){
+    for (const b of BANDS){ if (score <= b.max) return b.label; }
+    return "Very high";
+  }
+
+  function finishQuiz(){
+    const scores = computeScores();
+    renderResults(scores);
+    showScreen(screenResults);
+  }
+
+  // ---------- results rendering ----------
+  function renderResults(scores){
+    drawRadar(scores);
+
+    const container = document.getElementById('trait-cards');
+    container.innerHTML = '';
+    ["O","C","E","A","S"].forEach(key=>{
+      const score = scores[key];
+      const band = bandFor(score);
+      const pct = ((score - 1) / 4) * 100;
+      const card = document.createElement('div');
+      card.className = 'trait-card';
+      card.innerHTML = `
+        <div class="trait-head">
+          <span class="trait-name">${TRAITS[key].name}</span>
+          <span class="trait-score">${score.toFixed(1)} / 5 — ${band}</span>
+        </div>
+        <div class="trait-bar-track"><div class="trait-bar-fill" style="width:${pct}%"></div></div>
+        <p class="trait-desc">${DESCRIPTIONS[key][band]}</p>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function drawRadar(scores){
+    const canvas = document.getElementById('radar');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const size = 440;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0,0,size,size);
+
+    const center = size/2;
+    const maxR = size/2 - 60;
+    const keys = ["O","C","E","A","S"];
+    const n = keys.length;
+
+    function pointFor(i, r){
+      const angle = -Math.PI/2 + i * (2*Math.PI/n);
+      return { x: center + r*Math.cos(angle), y: center + r*Math.sin(angle) };
+    }
+
+    // grid rings
+    ctx.strokeStyle = 'rgba(244,238,224,0.16)';
+    ctx.lineWidth = 1;
+    for (let ring=1; ring<=5; ring++){
+      const r = maxR * (ring/5);
+      ctx.beginPath();
+      for (let i=0; i<=n; i++){
+        const p = pointFor(i % n, r);
+        if (i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+    }
+
+    // spokes
+    for (let i=0; i<n; i++){
+      const p = pointFor(i, maxR);
+      ctx.beginPath();
+      ctx.moveTo(center, center);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    }
+
+    // data polygon — warm firefly glow fill
+    ctx.beginPath();
+    keys.forEach((k, i)=>{
+      const r = ((scores[k]-1)/4) * maxR;
+      const p = pointFor(i, Math.max(r, 2));
+      if (i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    });
+    ctx.closePath();
+    ctx.save();
+    ctx.shadowColor = 'rgba(244,213,141,0.55)';
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = 'rgba(244,213,141,0.22)';
+    ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = '#f4d58d';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // data points
+    keys.forEach((k, i)=>{
+      const r = ((scores[k]-1)/4) * maxR;
+      const p = pointFor(i, Math.max(r, 2));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+      ctx.fillStyle = '#fff4d6';
+      ctx.fill();
+    });
+
+    // labels
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    keys.forEach((k, i)=>{
+      const p = pointFor(i, maxR + 34);
+      ctx.font = "600 13px 'IBM Plex Sans', sans-serif";
+      ctx.fillStyle = '#f4d58d';
+      ctx.fillText(TRAITS[k].short, p.x, p.y - 7);
+      ctx.font = "400 10.5px 'IBM Plex Sans', sans-serif";
+      ctx.fillStyle = 'rgba(244,238,224,0.62)';
+      ctx.fillText(TRAITS[k].name.length > 12 ? TRAITS[k].name.split(' ')[0] : TRAITS[k].name, p.x, p.y + 9);
+    });
+  }
+
+  // init first question in the background so it's ready when "begin" is pressed
+  renderQuestion();
+
+})();
+</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ them, picking the folder by hostname.
 | `sites/cv/`                       | https://cv.leahcrhunter.com      | CV                                  |
 | `sites/talent-against-humanity/`  | https://cards.leahcrhunter.com   | Cards-Against-Humanity-style game — see its own [README](sites/talent-against-humanity/README.md) |
 | `sites/corkboard/`                | https://board.leahcrhunter.com   | Interactive corkboard: notes, lists, photos, stickers — see its [README](sites/corkboard/README.md) |
+| `sites/ocean/`                    | https://ocean.leahcrhunter.com   | The Five Factor Snapshot — a Big Five (OCEAN) self-reflection quiz |
 
 All plain HTML/CSS/JS — no build step, no dependencies.
 
