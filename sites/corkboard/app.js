@@ -144,7 +144,8 @@
     return el;
   }
 
-  function editable(className, value, placeholder, onInput, multiline) {
+  // single-line inline text (titles, list rows, captions)
+  function editable(className, value, placeholder, onInput) {
     const d = document.createElement('div');
     d.className = className;
     d.contentEditable = 'true';
@@ -156,13 +157,28 @@
       e.preventDefault();
       document.execCommand('insertText', false, e.clipboardData.getData('text/plain'));
     });
-    if (!multiline) d.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); d.blur(); } });
+    d.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); d.blur(); } });
     return d;
+  }
+
+  // multi-line text (note body). A real textarea, because contenteditable
+  // mangles line breaks; it grows to fit its contents.
+  function textarea(className, value, placeholder, onInput) {
+    const t = document.createElement('textarea');
+    t.className = className;
+    t.spellcheck = false;
+    t.placeholder = placeholder;
+    t.rows = 1;
+    t.value = value || '';
+    const grow = () => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; };
+    t.addEventListener('input', () => { grow(); onInput(t.value); });
+    requestAnimationFrame(grow);
+    return t;
   }
 
   function renderNote(it, el) {
     el.dataset.color = it.color || 'yellow';
-    el.appendChild(editable('note-text', it.text, 'write something…', (t) => { it.text = t; save(); }, true));
+    el.appendChild(textarea('note-text', it.text, 'write something…', (t) => { it.text = t; save(); }));
 
     const colors = document.createElement('div');
     colors.className = 'note-colors';
@@ -237,6 +253,7 @@
   function focusEnd(el) {
     if (!el) return;
     el.focus();
+    if (el.tagName === 'TEXTAREA') { el.selectionStart = el.selectionEnd = el.value.length; return; }
     const range = document.createRange();
     range.selectNodeContents(el);
     range.collapse(false);
@@ -273,7 +290,7 @@
     const el = renderItem(it);
     itemsEl.appendChild(el);
     save();
-    const first = el.querySelector('[contenteditable]');
+    const first = el.querySelector('[contenteditable], textarea');
     if (first) setTimeout(() => focusEnd(first), 0);
     return el;
   }
@@ -294,7 +311,7 @@
     if (!el) return;
     if (e.target.closest('button, input, label')) return;
 
-    const editing = e.target.closest('[contenteditable]');
+    const editing = e.target.closest('[contenteditable], textarea');
     if (editing && document.activeElement === editing) return;   // selecting text, not dragging
 
     const it = findItem(el.dataset.id);

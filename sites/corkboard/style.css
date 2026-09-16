@@ -114,7 +114,8 @@ html, body {
   overflow: visible;
 }
 
-#items { position: absolute; inset: 0; }
+/* z-index: 1 makes a stacking context, so items' own z-indexes stay below the lights (z 5) */
+#items { position: absolute; inset: 0; z-index: 1; }
 
 /* ---------- fairy lights ---------- */
 
@@ -186,7 +187,14 @@ html, body {
   color: var(--ink);
   font-family: var(--hand); font-size: 1.35rem; line-height: 1.25;
 }
-.item-note .note-text { min-height: 120px; white-space: pre-wrap; word-wrap: break-word; }
+.item-note .note-text {
+  display: block; width: 100%; min-height: 120px;
+  border: 0; padding: 0; margin: 0; background: transparent; resize: none; overflow: hidden;
+  font: inherit; line-height: inherit; color: inherit;
+  cursor: text; user-select: text; -webkit-user-select: text;
+}
+.item-note .note-text::placeholder { color: var(--ink-soft); }
+.item-note .note-text:focus { outline: none; box-shadow: 0 0 0 2px rgba(244, 213, 141, 0.55); border-radius: 3px; }
 .item-note[data-color="yellow"] { --paper: #fff3a8; }
 .item-note[data-color="pink"]   { --paper: #ffd3e0; }
 .item-note[data-color="mint"]   { --paper: #d2f2df; }
