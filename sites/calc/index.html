@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VGC Calc — Leah C. R. Hunter</title>
+<meta name="description" content="A damage calculator for Pokémon Champions (Regulation M-C): save your team, pick an opponent, see the ranges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=11">
+</head>
+<body>
+
+<canvas id="firefly-bg"></canvas>
+
+<div class="topnav">
+  <span class="name">leah c. r. hunter</span>
+  <a href="https://leahcrhunter.com">← back home</a>
+</div>
+
+<header class="topbar">
+  <p class="eyebrow">Pokémon Champions · Regulation M-C</p>
+  <h1>VGC Calc</h1>
+  <p class="subtitle">Save your team once, pick an opponent, and see the damage ranges both ways — plus who moves first.</p>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="team">My team</button>
+    <button class="tab-btn" data-tab="matchup">Matchup</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===================== MY TEAM ===================== -->
+  <section id="tab-team" class="tab-panel active">
+    <div class="panel-head">
+      <h2>My team</h2>
+      <div class="panel-actions">
+        <button id="export-team-btn" class="btn-secondary">Export JSON</button>
+        <button id="import-team-btn" class="btn-secondary">Import JSON</button>
+      </div>
+    </div>
+
+    <div id="team-slots" class="team-slots"><!-- 6 slots rendered here --></div>
+
+    <textarea id="import-export-area" class="hidden" rows="10"
+      placeholder="Paste team JSON here to import, or read exported JSON here."></textarea>
+  </section>
+
+  <!-- ===================== MATCHUP ===================== -->
+  <section id="tab-matchup" class="tab-panel">
+    <div class="panel-head">
+      <h2>Opponent &amp; field</h2>
+    </div>
+
+    <div class="opponent-form">
+      <label>Species
+        <select id="opp-species"></select>
+      </label>
+      <label>Item
+        <select id="opp-item"></select>
+      </label>
+      <label>Ability
+        <input id="opp-ability" type="text" placeholder="leave blank for default">
+      </label>
+      <label class="mega-toggle hidden" id="opp-mega-wrap">Mega Evolution
+        <select id="opp-mega"><option value="">Not Mega</option></select>
+      </label>
+      <label>Status
+        <select id="opp-status">
+          <option value="">Healthy</option>
+          <option value="brn">Burned</option>
+          <option value="par">Paralyzed</option>
+          <option value="psn">Poisoned</option>
+          <option value="tox">Badly poisoned</option>
+          <option value="slp">Asleep</option>
+          <option value="frz">Frozen</option>
+        </select>
+      </label>
+      <div class="boosts-block">
+        <span class="boosts-label">Stat stages (−6 to +6)</span>
+        <div class="boosts-grid">
+          <label>Atk <input type="number" class="opp-boost" data-stat="atk" min="-6" max="6" value="0"></label>
+          <label>Def <input type="number" class="opp-boost" data-stat="def" min="-6" max="6" value="0"></label>
+          <label>SpA <input type="number" class="opp-boost" data-stat="spa" min="-6" max="6" value="0"></label>
+          <label>SpD <input type="number" class="opp-boost" data-stat="spd" min="-6" max="6" value="0"></label>
+          <label>Spe <input type="number" class="opp-boost" data-stat="spe" min="-6" max="6" value="0"></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-form">
+      <label>Weather
+        <select id="field-weather">
+          <option value="">None</option>
+          <option>Sun</option>
+          <option>Rain</option>
+          <option>Sand</option>
+          <option>Snow</option>
+        </select>
+      </label>
+      <label>Terrain
+        <select id="field-terrain">
+          <option value="">None</option>
+          <option>Electric</option>
+          <option>Grassy</option>
+          <option>Psychic</option>
+          <option>Misty</option>
+        </select>
+      </label>
+      <label class="checkbox-label">
+        <input id="field-my-reflect" type="checkbox"> My side: Reflect
+      </label>
+      <label class="checkbox-label">
+        <input id="field-my-lightscreen" type="checkbox"> My side: Light Screen
+      </label>
+      <label class="checkbox-label">
+        <input id="field-opp-reflect" type="checkbox"> Opp side: Reflect
+      </label>
+      <label class="checkbox-label">
+        <input id="field-opp-lightscreen" type="checkbox"> Opp side: Light Screen
+      </label>
+      <label class="checkbox-label">
+        <input id="field-my-tailwind" type="checkbox"> My side: Tailwind
+      </label>
+      <label class="checkbox-label">
+        <input id="field-opp-tailwind" type="checkbox"> Opp side: Tailwind
+      </label>
+      <label class="checkbox-label">
+        <input id="field-trick-room" type="checkbox"> Trick Room
+      </label>
+    </div>
+
+    <div class="panel-head">
+      <h2>Opponent's moves</h2>
+      <p class="hint">The eight most-used moves, with the top four ticked — untick anything you don't expect, add anything you've actually seen.</p>
+    </div>
+    <div id="opp-move-suggestions" class="move-suggestions"></div>
+    <div class="add-move-row">
+      <select id="opp-move-add"><option value="">— add a move seen in battle —</option></select>
+      <button id="opp-move-add-btn" class="btn-secondary">Add</button>
+    </div>
+
+    <div class="panel-head">
+      <h2>My team <span class="vs-name" id="vs-name"></span></h2>
+      <p class="hint">Updates as you change anything above. Status and stat stages here are for this matchup only — not saved with the team.
+        <strong>Deals</strong> is against the opponent's plausible bulk (0 → max Stat Points on the relevant defence); <strong>Takes</strong> is the normal damage roll against your exact spread.</p>
+    </div>
+    <p id="speed-summary" class="hint speed-summary hidden"></p>
+    <p id="calc-error" class="hint calc-error hidden"></p>
+    <div id="matchup-board" class="matchup-board"></div>
+  </section>
+
+  <footer class="disc">
+    Damage math by <a href="https://github.com/smogon/damage-calc">@smogon/calc</a>. Your team is saved in this browser only —
+    use Export JSON to back it up or move it. Stat Point conversion is still a best guess, so treat the numbers as a guide, not gospel.
+  </footer>
+
+</main>
+
+<!-- Vendored @smogon/calc, rebuilt with esbuild as a single self-contained
+     bundle -- the package's own dist/production.min.js has an unresolved
+     require('./desc') that throws in a real browser. See CONTEXT.md. -->
+<script src="smogon-calc.bundle.js"></script>
+
+<script src="champions-dex.js?v=11"></script>
+<script src="stat-points.js?v=11"></script>
+<script src="calc-engine.js?v=11"></script>
+<script src="team-store.js?v=11"></script>
+<script src="usage-stats.js?v=11"></script>
+<script src="ui.js?v=11"></script>
+<script src="main.js?v=11"></script>
+
+<script>
+// ================= firefly ambient background (same as ocean) =================
+(function(){
+  const canvas = document.getElementById('firefly-bg');
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let w, h, dpr;
+  function resize(){
+    dpr = window.devicePixelRatio || 1;
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COUNT = 20;
+  const flies = [];
+  for (let i=0; i<COUNT; i++){
+    flies.push({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random()-0.5) * 0.00028,
+      vy: (Math.random()-0.5) * 0.00028,
+      r: 1.4 + Math.random()*1.6,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.008 + Math.random()*0.014,
+    });
+  }
+
+  let t = 0;
+  function tick(){
+    t += 1;
+    ctx.clearRect(0, 0, w, h);
+
+    flies.forEach(f=>{
+      if (!reduceMotion){
+        f.x += f.vx;
+        f.y += f.vy;
+        if (f.x < -0.02) f.x = 1.02;
+        if (f.x > 1.02) f.x = -0.02;
+        if (f.y < -0.02) f.y = 1.02;
+        if (f.y > 1.02) f.y = -0.02;
+      }
+      const glow = 0.35 + 0.65 * (0.5 + 0.5*Math.sin(f.phase + t*f.speed));
+      const px = f.x * w;
+      const py = f.y * h;
+      const r = f.r;
+
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, r*7);
+      grad.addColorStop(0, `rgba(244,213,141,${0.85*glow})`);
+      grad.addColorStop(0.4, `rgba(244,213,141,${0.28*glow})`);
+      grad.addColorStop(1, 'rgba(244,213,141,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(px, py, r*7, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(255,244,214,${0.9*glow})`;
+      ctx.beginPath();
+      ctx.arc(px, py, r*0.6, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "_comment": [
+    "DIFF layer on top of the vendored @smogon/calc dex, keyed by the engine's species/forme name.",
+    "Most species (and, as of the 0.11 bundle, all 82 Champions Mega formes) exist in the engine with",
+    "correct data and need no entry. Add one only where Champions differs. Allowed keys per entry:",
+    "ability, types (array), baseStats ({hp, at, df, sa, sd, sp}). Everything else is taken from the engine.",
+    "Checked 19 Sep 2026: every Mega forme's engine ability matches the top ability seen on the Reg M-C",
+    "ladder except the two below. The Champions-original Z-Megas (Absol/Garchomp/Lucario-Mega-Z) and",
+    "Mega Eelektross/Scovillain have no ladder data yet and haven't been verified against an in-game source."
+  ],
+  "Staraptor-Mega": {
+    "_why": "Engine ships Intimidate; Champions' Mega Staraptor has Contrary (community-documented, see README).",
+    "ability": "Contrary"
+  },
+  "Floette-Mega": {
+    "_why": "Engine ships Flower Veil; 97% of Reg M-C ladder Mega Floette run Fairy Aura.",
+    "ability": "Fairy Aura"
+  }
+}

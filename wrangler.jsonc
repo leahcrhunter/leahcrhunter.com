@@ -20,7 +20,8 @@
       "cv.leahcrhunter.com":    "cv",
       "cards.leahcrhunter.com": "talent-against-humanity",
       "board.leahcrhunter.com": "corkboard",
-      "ocean.leahcrhunter.com": "ocean"
+      "ocean.leahcrhunter.com": "ocean",
+      "calc.leahcrhunter.com":  "calc"
     }
   },
 
@@ -29,6 +30,7 @@
     { "pattern": "cv.leahcrhunter.com",    "custom_domain": true },
     { "pattern": "cards.leahcrhunter.com", "custom_domain": true },
     { "pattern": "board.leahcrhunter.com", "custom_domain": true },
-    { "pattern": "ocean.leahcrhunter.com", "custom_domain": true }
+    { "pattern": "ocean.leahcrhunter.com", "custom_domain": true },
+    { "pattern": "calc.leahcrhunter.com",  "custom_domain": true }
   ]
 }
