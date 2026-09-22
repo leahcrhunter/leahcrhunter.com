@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leah C. R. Hunter — Talent Scientist</title>
+<title>Leah C. R. Hunter — Curriculum Vitae</title>
+<meta name="description" content="Curriculum vitae of Leah C. R. Hunter — occupational and organisational psychologist, Talent Scientist at Canonical.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -54,17 +55,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
   }
 
   .nav-name {
     font-family: 'Newsreader', serif;
     font-size: 17px;
     font-weight: 500;
+    white-space: nowrap;
   }
 
   .nav-links {
     display: flex;
-    gap: 22px;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    justify-content: flex-end;
   }
 
   .nav-links a {
@@ -100,7 +105,7 @@
   .tagline {
     font-size: 15.5px;
     color: var(--ink-soft);
-    max-width: 480px;
+    max-width: 520px;
     margin: 0 0 22px;
   }
 
@@ -109,11 +114,25 @@
     color: var(--ink-soft);
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 18px;
+    align-items: center;
+    gap: 6px 18px;
   }
 
   .contact a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--line); }
   .contact a:hover { color: var(--pine); border-color: var(--pine); }
+
+  .print-btn {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--pine);
+    background: transparent;
+    border: 1px solid var(--pine);
+    border-radius: 3px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+
+  .print-btn:hover { background: var(--pine-tint); }
 
   /* Highlights strip */
   .highlights {
@@ -140,6 +159,8 @@
     line-height: 1;
     margin-bottom: 6px;
   }
+
+  .highlight-number.small { font-size: 20px; }
 
   .highlight-label {
     font-size: 12.5px;
@@ -168,28 +189,16 @@
   }
 
   .statement .highlight { color: var(--pine); }
+  .statement p { margin: 0 0 16px; }
+  .statement p:last-child { margin-bottom: 0; }
 
-  /* What I bring cards */
-  .bring-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px 32px;
-  }
-
-  .bring-card h3 {
-    font-size: 15px;
-    font-weight: 600;
-    margin: 0 0 8px;
-  }
-
-  .bring-card p {
-    font-size: 14px;
-    color: var(--ink-soft);
-    margin: 0;
-    line-height: 1.55;
-  }
-
-  /* Experience timeline */
+  /* Education */
+  .edu-entry { margin-bottom: 26px; }
+  .edu-entry:last-child { margin-bottom: 0; }
+  .edu-degree { font-weight: 600; font-size: 15.5px; }
+  .edu-meta { font-size: 14px; color: var(--ink-soft); margin-top: 2px; }
+  .edu-grade { color: var(--brass); font-weight: 600; }
+  /* Positions timeline */
   .timeline { position: relative; padding-left: 26px; }
   .timeline::before {
     content: "";
@@ -201,7 +210,7 @@
     background: var(--line);
   }
 
-  .entry { position: relative; margin-bottom: 32px; }
+  .entry { position: relative; margin-bottom: 34px; }
   .entry:last-child { margin-bottom: 0; }
 
   .entry::before {
@@ -245,6 +254,22 @@
     white-space: nowrap;
   }
 
+  .entry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+
+  .entry-type {
+    color: var(--brass);
+    font-weight: 500;
+  }
+
+  .entry-meta .sep { color: var(--line); }
+
   .entry ul {
     margin: 8px 0 0;
     padding-left: 18px;
@@ -256,38 +281,90 @@
     font-size: 14.5px;
   }
 
-  /* Education */
-  .edu-entry { margin-bottom: 20px; }
-  .edu-entry:last-child { margin-bottom: 0; }
-  .edu-degree { font-weight: 600; font-size: 15.5px; }
-  .edu-meta { font-size: 14px; color: var(--ink-soft); margin-top: 2px; }
-  .edu-grade { color: var(--brass); font-weight: 600; }
-
-  /* Skills */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px 40px;
+  .blank {
+    color: var(--brass);
+    background: rgba(176,141,87,0.10);
+    padding: 0 3px;
+    border-radius: 2px;
   }
 
-  .skill-group h3 {
-    font-size: 14px;
+  /* Expertise */
+  .expertise-item {
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .expertise-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .expertise-item h3 {
+    font-size: 15px;
     font-weight: 600;
-    margin: 0 0 10px;
-    color: var(--ink);
+    margin: 0 0 6px;
   }
 
-  .skill-group ul {
-    margin: 0;
-    padding-left: 16px;
-  }
-
-  .skill-group li {
-    font-size: 13.5px;
+  .expertise-item p {
+    font-size: 14.5px;
     color: var(--ink-soft);
-    margin-bottom: 6px;
-    line-height: 1.45;
+    margin: 0;
+    line-height: 1.55;
+    max-width: 660px;
   }
+
+  .expertise-item p + p { margin-top: 8px; }
+
+  /* Proficiency table */
+  .table-wrap { overflow-x: auto; margin-top: 12px; }
+
+  table.packages {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 460px;
+    font-size: 14px;
+  }
+
+  table.packages th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line);
+    padding: 0 14px 8px 0;
+  }
+
+  table.packages td {
+    padding: 10px 14px 10px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+    vertical-align: top;
+  }
+
+  table.packages tr:last-child td { border-bottom: none; }
+  table.packages td.pkg { color: var(--ink); font-weight: 600; white-space: nowrap; }
+
+  .level {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 2px;
+    white-space: nowrap;
+    background: var(--pine-tint);
+    color: var(--pine);
+    border: 1px solid transparent;
+  }
+
+  .level.intermediate {
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: var(--line);
+  }
+
+  /* Honours list */
+  .plain-list { margin: 0; padding-left: 18px; }
+  .plain-list li { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 7px; }
 
   /* Contact CTA */
   .contact-cta {
@@ -338,6 +415,10 @@
     border-top: 1px solid var(--line);
     font-size: 13px;
     color: var(--ink-soft);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 20px;
   }
 
   @media (max-width: 620px) {
@@ -346,14 +427,52 @@
     header.hero { padding: 44px 0 32px; }
     h1 { font-size: 34px; }
     .highlight-item { flex: 1 1 45%; }
-    .bring-grid, .skills-grid { grid-template-columns: 1fr; }
     .entry-head { flex-direction: column; }
-    .nav-links { gap: 14px; }
+    .nav-links { gap: 4px 14px; }
+
+    /* Restack the proficiency table so nothing scrolls sideways on a phone */
+    table.packages { min-width: 0; }
+    table.packages thead { display: none; }
+    table.packages tr {
+      display: block;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    table.packages tr:last-child { border-bottom: none; padding-bottom: 0; }
+    table.packages td { display: block; padding: 0 0 5px; border-bottom: none; }
+    table.packages td:last-child { padding-bottom: 0; }
+    table.packages td.pkg { white-space: normal; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     * { transition: none !important; }
+  }
+
+  /* Print / save-as-PDF: a clean academic document */
+  @page { margin: 1.6cm; }
+
+  @media print {
+    nav, .highlights, .print-btn, .cta-links, .contact-cta { display: none !important; }
+    html, body { background: #fff; font-size: 10.5pt; }
+    .page { max-width: none; padding: 0; }
+    header.hero { padding: 0 0 18px; }
+    h1 { font-size: 22pt; margin-bottom: 4px; }
+    .role { font-size: 12pt; }
+    .tagline { font-size: 10pt; max-width: none; }
+    .statement { font-size: 11pt; max-width: none; }
+    section { margin-bottom: 20px; }
+    h2 { font-size: 10.5pt; margin-bottom: 14px; page-break-after: avoid; }
+    /* Keep rows and roles whole, but let long blocks flow across pages */
+    .entry, .edu-entry, table.packages tr { page-break-inside: avoid; }
+    .expertise-item h3, table.packages thead { page-break-after: avoid; }
+    .entry { margin-bottom: 16px; }
+    .expertise-item { margin-bottom: 14px; padding-bottom: 14px; }
+    a { color: inherit; border-bottom: none; }
+    .table-wrap { overflow: visible; }
+    table.packages { min-width: 0; }
+    .level { border: 1px solid var(--line); background: transparent; color: #000; }
+    footer { margin-top: 24px; }
   }
 </style>
 </head>
@@ -363,9 +482,9 @@
   <div class="nav-inner">
     <span class="nav-name">Leah C. R. Hunter</span>
     <div class="nav-links">
-      <a href="#experience">Experience</a>
       <a href="#education">Education</a>
-      <a href="#skills">Skills</a>
+      <a href="#positions">Positions</a>
+      <a href="#expertise">Expertise</a>
       <a href="#contact">Contact</a>
     </div>
   </div>
@@ -375,13 +494,14 @@
 
   <header class="hero">
     <h1>Leah C. R. Hunter</h1>
-    <p class="role">Talent Scientist</p>
-    <p class="tagline">Bridging psychology and data to help organisations understand and hire people well.</p>
+    <p class="role">Occupational &amp; Organisational Psychologist · Talent Scientist, Canonical</p>
+    <p class="tagline">Psychological measurement and quantitative methods applied to how organisations understand, assess, and select people.</p>
     <div class="contact">
       <a href="mailto:leahhunter088@gmail.com">leahhunter088@gmail.com</a>
       <span>07496 156947</span>
       <span>Essex, UK</span>
       <a href="https://www.linkedin.com/in/leah-hunter-38aaa621b/" target="_blank" rel="noopener">LinkedIn</a>
+      <button class="print-btn" id="printBtn" type="button">Print / save as PDF</button>
     </div>
   </header>
 
@@ -391,111 +511,36 @@
       <span class="highlight-label">First-Class Honours degrees (MSc &amp; BSc)</span>
     </div>
     <div class="highlight-item">
-      <span class="highlight-number">10</span>
-      <span class="highlight-label">Interviews conducted per week</span>
+      <span class="highlight-number">3 yrs</span>
+      <span class="highlight-label">Research assistantship on a doctoral project</span>
+    </div>
+    <div class="highlight-item">
+      <span class="highlight-number">1</span>
+      <span class="highlight-label">International conference presentation (Egypt)</span>
     </div>
     <div class="highlight-item">
       <span class="highlight-number">12</span>
       <span class="highlight-label">Hiring leads managed across multiple departments</span>
     </div>
-    <div class="highlight-item">
-      <span class="highlight-number">MENSA</span>
-      <span class="highlight-label">Member since age 11</span>
-    </div>
-    <div class="highlight-item">
-      <span class="highlight-number" style="font-size: 20px;">International</span>
-      <span class="highlight-label">Research presented at a conference in Egypt</span>
-    </div>
   </div>
 
   <section>
     <h2>Personal statement</h2>
-    <p class="statement">
-      As a <span class="highlight">Talent Scientist at Canonical</span>, I manage a team of 12 hiring leads and
-      apply evidence-based and data-driven methods to how we select our people. From SQL to JavaScript to
-      applying behavioural science, real data backs up my decision making and processes. My background in
-      Occupational and Organisational Psychology (MSc, University of Surrey) underpins this work, giving me a
-      grounded understanding of what actually drives good hiring decisions. Being a member of MENSA since age
-      11, I bring strong problem-solving instincts, adaptability, and a genuine curiosity about what makes
-      people and processes work well.
-    </p>
-  </section>
-
-  <section>
-    <h2>What I bring</h2>
-    <div class="bring-grid">
-      <div class="bring-card">
-        <h3>Data &amp; analysis</h3>
-        <p>Rapid learner with a strong mathematics background. Proficient in SPSS, Excel, SQL, and Python, with hands-on experience in regression, t-tests, factor analysis, and psychometric scale development.</p>
-      </div>
-      <div class="bring-card">
-        <h3>Presentation &amp; communication</h3>
-        <p>Experienced presenter, including at an international conference in Egypt to an audience of around 30. Comfortable communicating complex ideas to both technical and general audiences.</p>
-      </div>
-      <div class="bring-card">
-        <h3>Team working</h3>
-        <p>Years of collaborative experience through societies and group projects. Practised in active listening, respecting diverse viewpoints, and resolving conflict, while keeping outcomes and people both on track.</p>
-      </div>
-      <div class="bring-card">
-        <h3>Organisation</h3>
-        <p>Builds detailed, time-boxed to-do lists and schedules work well ahead of deadlines. Proactive about spotting issues early, keeping projects on track without last-minute surprises.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="experience">
-    <h2>Experience</h2>
-    <div class="timeline">
-
-      <div class="entry current">
-        <div class="entry-head">
-          <div><span class="entry-title">Talent Scientist</span> — <span class="entry-org">Canonical</span></div>
-          <div class="entry-date">Oct 2025 – Present</div>
-        </div>
-        <ul>
-          <li>Manage a team of 12 hiring leads, coordinating and overseeing hiring across multiple departments.</li>
-          <li>Conduct around 10 interviews per week.</li>
-          <li>Apply behavioural interview techniques and psychometric assessment to support evidence-based hiring across a fully distributed, global organisation.</li>
-          <li>Use SQL and Python to analyse people data and surface insights that inform hiring strategy and process improvements.</li>
-          <li>Partner with senior stakeholders to keep hiring targets on track and design solutions to complex selection challenges.</li>
-          <li>Contribute to documentation and process efficiencies supporting Canonical's talent acquisition pipeline.</li>
-          <li>Support ticket-based queries across hiring systems, building deep operational knowledge of Canonical's talent platforms.</li>
-        </ul>
-      </div>
-
-      <div class="entry">
-        <div class="entry-head">
-          <div><span class="entry-title">SEND Tutor</span> — <span class="entry-org">DegreeSix</span></div>
-          <div class="entry-date">Sept 2022 – Jan 2024</div>
-        </div>
-        <ul>
-          <li>Mentored high-risk and neurodivergent individuals, developing crisis management, proactive decision-making, and adaptability skills.</li>
-          <li>Balanced responsibilities with academic commitments through strong organisation and attention to detail.</li>
-        </ul>
-      </div>
-
-      <div class="entry">
-        <div class="entry-head">
-          <div><span class="entry-title">Research Assistant</span> — <span class="entry-org">Coventry University</span></div>
-          <div class="entry-date">Sept 2021 – Jul 2024</div>
-        </div>
-        <ul>
-          <li>Invited to assist on a doctoral research project, running high-complexity experiments and coordinating participants.</li>
-          <li>Gained advanced data entry experience and strengthened technical, interpersonal, and leadership skills.</li>
-        </ul>
-      </div>
-
-      <div class="entry">
-        <div class="entry-head">
-          <div><span class="entry-title">Mathematics Teacher</span> — <span class="entry-org">Brentwood School</span></div>
-          <div class="entry-date">Jan 2018 – Jul 2019</div>
-        </div>
-        <ul>
-          <li>Assisted with after-school maths tutoring, fostering a positive learning environment.</li>
-          <li>Developed communication skills, explaining complex ideas clearly and effectively.</li>
-        </ul>
-      </div>
-
+    <div class="statement">
+      <p>
+        I am an occupational and organisational psychologist working as a
+        <span class="highlight">Talent Scientist at Canonical</span>, where I apply psychometric assessment,
+        behavioural science, and quantitative analysis to selection at scale across a fully distributed,
+        global organisation.
+      </p>
+      <p>
+        My training is a research training: a First-Class MSc in Occupational and Organisational Psychology
+        (University of Surrey) and a First-Class BSc in Forensic Psychology (Coventry University), alongside
+        three years as a research assistant on a doctoral project running high-complexity experimental work.
+        My methodological interests sit in the measurement of individual differences — psychometric scale
+        development, factor analysis, and regression modelling — and in how evidence-based selection can be
+        made both more accurate and fairer.
+      </p>
     </div>
   </section>
 
@@ -504,71 +549,261 @@
 
     <div class="edu-entry">
       <div class="edu-degree">MSc (Hons) Occupational and Organisational Psychology — <span class="edu-grade">First Class</span></div>
-      <div class="edu-meta">University of Surrey · Sept 2024 – Sept 2025</div>
+      <div class="edu-meta">University of Surrey, Guildford, UK · Sept 2024 – Sept 2025</div>
     </div>
 
     <div class="edu-entry">
       <div class="edu-degree">BSc (Hons) Forensic Psychology — <span class="edu-grade">First Class</span></div>
-      <div class="edu-meta">Coventry University · Sept 2021 – Jul 2024</div>
+      <div class="edu-meta">Coventry University, Coventry, UK · Sept 2021 – Jul 2024</div>
     </div>
   </section>
 
-  <section id="skills">
-    <h2>Skills</h2>
-    <div class="skills-grid">
+  <section id="positions">
+    <h2>Relevant positions held</h2>
+    <div class="timeline">
 
-      <div class="skill-group">
-        <h3>Data & analysis</h3>
+      <div class="entry current">
+        <div class="entry-head">
+          <div><span class="entry-title">Talent Scientist</span> — <span class="entry-org">Canonical Ltd.</span></div>
+          <div class="entry-date">Oct 2025 – Present</div>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-type">Applied assessment &amp; people analytics</span>
+          <span class="sep">·</span>
+          <span>Remote, United Kingdom</span>
+        </div>
         <ul>
-          <li>SQL & JavaScript — core tools for analysing people data and driving hiring insights at Canonical</li>
-          <li>dbt — data transformation and modelling</li>
-          <li>Superset — data exploration and dashboarding</li>
-          <li>Dashboarding — building reporting views for hiring metrics</li>
-          <li>Google Apps Script — automating recurring reporting tasks</li>
-          <li>Greenhouse — applicant tracking and hiring workflow management</li>
-          <li>VS Code</li>
-          <li>Regression, t-tests, factor analysis</li>
-          <li>Excel — charts, formatting, conditional logic</li>
-          <li>R — ongoing independent certification</li>
-          <li>SPSS — core and advanced statistical techniques, including psychometric scale development</li>
+          <li>Apply behavioural interview techniques and psychometric assessment to support evidence-based selection across a fully distributed, global organisation.</li>
+          <li>Manage a team of 12 hiring leads, coordinating and overseeing hiring across multiple departments.</li>
+          <li>Conduct approximately 10 structured interviews per week.</li>
+          <li>Use SQL and Python to analyse people data, surfacing insights that inform selection strategy and process design.</li>
+          <li>Partner with senior stakeholders to translate analytic findings into practical solutions for complex selection problems.</li>
+          <li>Contribute to documentation and process design supporting the organisation's talent acquisition pipeline.</li>
         </ul>
       </div>
 
-      <div class="skill-group">
-        <h3>Microsoft & tools</h3>
+      <div class="entry">
+        <div class="entry-head">
+          <div><span class="entry-title">Research Assistant</span> — <span class="entry-org">Coventry University</span></div>
+          <div class="entry-date">Sept 2021 – Jul 2024</div>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-type">Research assistantship</span>
+          <span class="sep">·</span>
+          <span>Coventry, United Kingdom</span>
+        </div>
         <ul>
-          <li>Excel — charts, graphs, cell and conditional formatting</li>
-          <li>PowerPoint & Word — presentations, leaflets, posters</li>
-          <li>Graphics creation and picture editing</li>
-          <li>Thomas psychometrics — psychometric assessment platform</li>
+          <li>Invited to assist on a doctoral research project <span class="blank">[ topic / PI name ]</span>, running high-complexity experimental sessions and coordinating participant scheduling and recruitment.</li>
+          <li>Responsible for data entry, coding, and quality checking of experimental data.</li>
+          <li>Developed practical competence in experimental protocol adherence, participant briefing and debriefing, and research ethics in practice.</li>
         </ul>
       </div>
 
-      <div class="skill-group">
-        <h3>Interpersonal</h3>
+      <div class="entry">
+        <div class="entry-head">
+          <div><span class="entry-title">SEND Tutor</span> — <span class="entry-org">DegreeSix</span></div>
+          <div class="entry-date">Sept 2022 – Jan 2024</div>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-type">Tutoring, mentoring &amp; advocacy</span>
+          <span class="sep">·</span>
+          <span>United Kingdom</span>
+        </div>
         <ul>
-          <li>Emotional intelligence — reading individual and group dynamics to build trust with candidates and hiring leads</li>
-          <li>Adaptability — moving fluidly between tutoring, research, and fast-paced hiring environments</li>
-          <li>Persuasion — influencing stakeholder decisions and aligning teams around evidence-based hiring practices</li>
-          <li>Stakeholder management — partnering closely with senior leaders to keep hiring targets on track</li>
-          <li>Active listening & conflict resolution — built through years of collaborative team and group work</li>
+          <li>Provided one-to-one tutoring and mentoring to neurodivergent and high-risk young people with special educational needs and disabilities.</li>
+          <li>Adapted teaching materials and delivery to individual learning profiles and support plans.</li>
+          <li>Developed crisis management, safeguarding awareness, and proactive decision-making in sensitive situations.</li>
         </ul>
       </div>
 
-      <div class="skill-group">
-        <h3>Other certifications</h3>
+      <div class="entry">
+        <div class="entry-head">
+          <div><span class="entry-title">Mathematics Teaching Assistant</span> — <span class="entry-org">Brentwood School</span></div>
+          <div class="entry-date">Jan 2018 – Jul 2019</div>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-type">Teaching assistantship</span>
+          <span class="sep">·</span>
+          <span>Brentwood, Essex, United Kingdom</span>
+        </div>
         <ul>
-          <li>Adobe Certified Professional in Graphic Design &amp; Illustration Using Adobe Illustrator</li>
+          <li>Delivered after-school mathematics tutoring in small-group and one-to-one settings.</li>
+          <li>Explained abstract quantitative concepts to students across a range of attainment levels.</li>
         </ul>
       </div>
 
     </div>
+  </section>
+
+  <section id="expertise">
+    <h2>Experience and expertise</h2>
+
+    <div class="expertise-item">
+      <h3>Research design</h3>
+      <p>
+        Trained in experimental and quasi-experimental design, survey design, and psychometric scale
+        development across two research degrees. Three years' hands-on experience running high-complexity
+        experimental sessions on a doctoral project, including participant recruitment and scheduling,
+        protocol adherence, briefing and debriefing, and applied research ethics. Comfortable moving from
+        a research question to an analysable design, and from a measurement problem to a validated scale.
+      </p>
+    </div>
+
+    <div class="expertise-item">
+      <h3>Statistical methods and data analysis</h3>
+      <p>
+        Multiple regression, <em>t</em>-tests, ANOVA, correlation and reliability analysis, exploratory and
+        confirmatory factor analysis, and psychometric item and scale analysis. Applied experience with
+        large-scale organisational datasets at Canonical: cleaning, transformation, and modelling of people
+        data to answer selection questions, and translation of results into recommendations for
+        non-technical stakeholders.
+      </p>
+    </div>
+
+    <div class="expertise-item">
+      <h3>Statistical packages and software</h3>
+      <div class="table-wrap">
+        <table class="packages">
+          <thead>
+            <tr>
+              <th scope="col">Package</th>
+              <th scope="col">Proficiency</th>
+              <th scope="col">Basis</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="pkg">SPSS</td>
+              <td><span class="level">Advanced</span></td>
+              <td>Core and advanced techniques throughout MSc and BSc; factor analysis, regression, and psychometric scale development.</td>
+            </tr>
+            <tr>
+              <td class="pkg">Excel</td>
+              <td><span class="level">Advanced</span></td>
+              <td>Data handling, charting, conditional logic, and reporting.</td>
+            </tr>
+            <tr>
+              <td class="pkg">SQL</td>
+              <td><span class="level">Advanced</span></td>
+              <td>Daily use for people-data analysis at Canonical.</td>
+            </tr>
+            <tr>
+              <td class="pkg">Python</td>
+              <td><span class="level intermediate">Intermediate</span></td>
+              <td>Analysis and automation of people data in an applied setting.</td>
+            </tr>
+            <tr>
+              <td class="pkg">R</td>
+              <td><span class="level intermediate">Intermediate</span></td>
+              <td>Statistical analysis; ongoing independent certification.</td>
+            </tr>
+            <tr>
+              <td class="pkg">JavaScript &amp; Google Apps Script</td>
+              <td><span class="level intermediate">Intermediate</span></td>
+              <td>Automating recurring reporting and building web applications.</td>
+            </tr>
+            <tr>
+              <td class="pkg">dbt</td>
+              <td><span class="level intermediate">Intermediate</span></td>
+              <td>Data transformation and modelling.</td>
+            </tr>
+            <tr>
+              <td class="pkg">Superset</td>
+              <td><span class="level intermediate">Intermediate</span></td>
+              <td>Data exploration and dashboarding of hiring metrics.</td>
+            </tr>
+            <tr>
+              <td class="pkg">Qualtrics</td>
+              <td><span class="level intermediate">Intermediate</span></td>
+              <td>Survey design, distribution, and data collection.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="expertise-item">
+      <h3>Computer programming and coding</h3>
+      <p>
+        SQL and JavaScript as primary working languages, plus Python for analysis and automation. Experience
+        with dbt for data transformation and modelling, Apache Superset for exploration and dashboarding,
+        Google Apps Script for automating recurring reporting, and Git and VS Code as everyday tooling.
+        Builds and maintains personal web projects end to end
+        (<a href="https://leahcrhunter.com" target="_blank" rel="noopener">leahcrhunter.com</a>), including a
+        Big Five self-reflection instrument delivered as a web application.
+      </p>
+    </div>
+
+    <div class="expertise-item">
+      <h3>Teaching</h3>
+      <p>
+        Eighteen months as a mathematics teaching assistant at Brentwood School, delivering after-school tutoring
+        in small-group and one-to-one settings, and sixteen months of one-to-one SEND tutoring with
+        DegreeSix. Practised at differentiating explanation for the individual learner, and at making
+        quantitative material accessible to students who do not consider themselves mathematical.
+      </p>
+    </div>
+
+    <div class="expertise-item">
+      <h3>Counselling and advising</h3>
+      <p>
+        Mentoring of neurodivergent and high-risk young people as a SEND tutor, including crisis management,
+        safeguarding awareness, and boundary-setting in sensitive one-to-one work. Currently
+        advises candidates and hiring leads through a structured assessment process, which requires
+        careful interviewing, active listening, and delivering difficult feedback well.
+      </p>
+    </div>
+
+    <div class="expertise-item">
+      <h3>Administration and leadership</h3>
+      <p>
+        Manages a team of 12 hiring leads at Canonical, coordinating selection activity across multiple
+        departments and partnering with senior stakeholders to keep organisational targets on track. Owns
+        process documentation and efficiency improvements for the talent acquisition pipeline, and handles
+        ticket-based queries across hiring systems — operational work that requires accuracy, prioritisation,
+        and clear written communication at volume.
+      </p>
+    </div>
+
+    <div class="expertise-item">
+      <h3>Advocacy</h3>
+      <p>
+        Advocacy for neurodivergent learners as a SEND tutor, adapting materials and delivery to individual
+        support plans and representing student needs to the people responsible for meeting them. Professional
+        advocacy for fair and evidence-based selection practice, making the case to senior stakeholders for
+        structured, validated assessment over unstructured judgement.
+      </p>
+    </div>
+
+    <div class="expertise-item">
+      <h3>Other relevant experience</h3>
+      <p>
+        <strong>Assessment platforms:</strong> Thomas International psychometric assessment; Greenhouse
+        applicant tracking system.
+        <strong>Certifications:</strong> Adobe Certified Professional in Graphic Design &amp; Illustration
+        using Adobe Illustrator.
+        <strong>Communication:</strong> experienced presenter to both technical and general audiences,
+        including at an international conference; design and production of presentations, posters, and
+        reports.
+      </p>
+    </div>
+
+  </section>
+
+  <section id="honours">
+    <h2>Honours and memberships</h2>
+    <ul class="plain-list">
+      <li>First-Class Honours, MSc Occupational and Organisational Psychology, University of Surrey (2025).</li>
+      <li>First-Class Honours, BSc Forensic Psychology, Coventry University (2024).</li>
+      <li>Member, MENSA — since age 11.</li>
+      <li>Adobe Certified Professional in Graphic Design &amp; Illustration using Adobe Illustrator.</li>
+    </ul>
   </section>
 
   <section id="contact">
     <div class="contact-cta">
       <h2>Get in touch</h2>
-      <p>Happy to talk about talent science, psychology in the workplace, or anything data and hiring related.</p>
+      <p>Happy to talk about psychological measurement, selection research, or anything data and hiring related.</p>
       <div class="cta-links">
         <a class="cta-link" href="mailto:leahhunter088@gmail.com">Email me</a>
         <a class="cta-link secondary" href="tel:07496156947">Call: 07496 156947</a>
@@ -578,9 +813,16 @@
   </section>
 
   <footer>
-    References available on request.
+    <span>References available on request.</span>
+    <span>Last updated September 2026.</span>
   </footer>
 
 </div>
+
+<script>
+  document.getElementById('printBtn').addEventListener('click', function () {
+    window.print();
+  });
+</script>
 </body>
 </html>
