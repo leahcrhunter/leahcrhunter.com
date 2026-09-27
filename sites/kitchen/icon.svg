@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- the landing page's firefly jar on a night-sky tile -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d1026"/><stop offset="0.6" stop-color="#1c1834"/><stop offset="1" stop-color="#2c2340"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f4d58d" stop-opacity="0.85"/><stop offset="0.45" stop-color="#f4d58d" stop-opacity="0.25"/><stop offset="1" stop-color="#f4d58d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <g transform="translate(96 88) scale(5)">
+    <path d="M24 14 C24 6, 40 6, 40 14" stroke="#c9c2ad" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <rect x="21" y="10" width="22" height="7" rx="2.5" fill="#8a6a3f" stroke="#5f4a2a" stroke-width="1"/>
+    <rect x="21" y="10" width="22" height="2.4" rx="1.2" fill="#a9865a"/>
+    <rect x="23" y="16" width="18" height="7" fill="#f4eee0" fill-opacity="0.1" stroke="#f4eee0" stroke-opacity="0.4" stroke-width="1"/>
+    <path d="M17 23 H47 V47 C47 54.5, 40.7 58 32 58 C23.3 58, 17 54.5, 17 47 Z" fill="#f4eee0" fill-opacity="0.08" stroke="#f4eee0" stroke-opacity="0.45" stroke-width="1.3"/>
+    <path d="M22 27 L22 49" stroke="#f4eee0" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="32" cy="41" r="13" fill="url(#glow)"/>
+    <circle cx="32" cy="41" r="3.4" fill="#fff4d6"/>
+  </g>
+</svg>

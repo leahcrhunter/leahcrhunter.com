@@ -21,7 +21,9 @@
       "cards.leahcrhunter.com": "talent-against-humanity",
       "board.leahcrhunter.com": "corkboard",
       "ocean.leahcrhunter.com": "ocean",
-      "calc.leahcrhunter.com":  "calc"
+      "calc.leahcrhunter.com":  "calc",
+      "kitchen.leahcrhunter.com": "kitchen",
+      "stream.leahcrhunter.com":  "stream"
     }
   },
 
@@ -31,6 +33,28 @@
     { "pattern": "cards.leahcrhunter.com", "custom_domain": true },
     { "pattern": "board.leahcrhunter.com", "custom_domain": true },
     { "pattern": "ocean.leahcrhunter.com", "custom_domain": true },
-    { "pattern": "calc.leahcrhunter.com",  "custom_domain": true }
+    { "pattern": "calc.leahcrhunter.com",  "custom_domain": true },
+    { "pattern": "kitchen.leahcrhunter.com", "custom_domain": true },
+    // Not a custom domain: stream's DNS record points at the video server, and
+    // the Worker passes signed-in requests through to it (src/stream/index.js).
+    { "pattern": "stream.leahcrhunter.com/*", "zone_name": "leahcrhunter.com" }
+  ],
+
+  // The kitchen app's shared data (sites/kitchen/), made with
+  // `npx wrangler d1 create kitchen`; see sites/kitchen/README.md for the
+  // rest of the one-off setup.
+  "d1_databases": [
+    {
+      "binding": "KITCHEN_DB",
+      "database_name": "kitchen",
+      "database_id": "7577edec-4eaa-4aed-823b-5df75a879044",
+      "migrations_dir": "migrations/kitchen"
+    }
+  ],
+
+  // Who's watching stream.leahcrhunter.com right now: the "viewer-presence"
+  // KV namespace, shared with the old stream Worker.
+  "kv_namespaces": [
+    { "binding": "VIEWERS", "id": "438f0c5c12a749afa81e98c1c1c2912c" }
   ]
 }

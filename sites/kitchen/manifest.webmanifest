@@ -1,0 +1,15 @@
+{
+  "name": "Kitchen",
+  "short_name": "Kitchen",
+  "description": "What we have, what to cook, what to buy.",
+  "start_url": "/#pantry",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d1026",
+  "theme_color": "#0d1026",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

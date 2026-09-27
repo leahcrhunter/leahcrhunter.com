@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>a light for you</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dusk-deep: #0b1f1a;
+    --dusk-indigo: #111b2e;
+    --moss: #4e7a5e;
+    --firefly: #f5c24c;
+    --firefly-soft: #ffd37a;
+    --paper: #f2efe4;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: radial-gradient(ellipse at 50% 20%, var(--dusk-indigo) 0%, var(--dusk-deep) 65%, #060f0c 100%);
+    font-family: 'Inter', sans-serif;
+  }
+
+  main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    text-align: center;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(26px, 4vw, 38px);
+    color: var(--paper);
+    margin: 0 0 6px;
+  }
+
+  .subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--moss);
+    margin-bottom: 28px;
+  }
+
+  form {
+    display: flex;
+    gap: 10px;
+    width: min(360px, 100%);
+  }
+
+  input, button {
+    font: inherit;
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    color: var(--paper);
+    background: rgba(242, 239, 228, 0.06);
+    border: 1px solid rgba(245, 194, 76, 0.25);
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--firefly);
+    box-shadow: 0 0 0 3px rgba(245, 194, 76, 0.2);
+  }
+
+  button {
+    font-weight: 500;
+    color: var(--dusk-deep);
+    background: var(--firefly);
+    border: 0;
+    cursor: pointer;
+  }
+
+  .error {
+    min-height: 1.4em;
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--firefly-soft);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>come sit with me a while</h1>
+  <div class="subtitle">the door's just here</div>
+
+  <form method="post" action="/login">
+    <label for="password" class="visually-hidden">password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" placeholder="password" required autofocus>
+    <button>come in</button>
+  </form>
+  <p class="error" id="error" role="alert"></p>
+</main>
+
+<script>
+  const messages = {
+    wrong: "not quite. try again?",
+    wait: "too many tries. give it fifteen minutes.",
+    setup: "the password isn't set up yet.",
+  };
+  const e = new URLSearchParams(location.search).get("e");
+  if (messages[e]) document.getElementById("error").textContent = messages[e];
+</script>
+</body>
+</html>

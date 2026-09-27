@@ -12,6 +12,8 @@ them, picking the folder by hostname.
 | `sites/corkboard/`                | https://board.leahcrhunter.com   | Interactive corkboard: notes, lists, photos, stickers — see its [README](sites/corkboard/README.md) |
 | `sites/ocean/`                    | https://ocean.leahcrhunter.com   | The Five Factor Snapshot — a Big Five (OCEAN) self-reflection quiz |
 | `sites/calc/`                     | https://calc.leahcrhunter.com    | Pokémon Champions (VGC) damage calculator — see its [README](sites/calc/README.md) |
+| `sites/kitchen/`                  | https://kitchen.leahcrhunter.com | Private kitchen app: pantry, recipes, shopping list. Behind a password, with a D1 database — see its [README](sites/kitchen/README.md) |
+| `sites/stream/`                   | https://stream.leahcrhunter.com  | Live stream page. Same password as kitchen; the Worker passes the video through from the origin server once you're signed in |
 
 All plain HTML/CSS/JS — no build step, no dependencies.
 
@@ -20,6 +22,8 @@ All plain HTML/CSS/JS — no build step, no dependencies.
 ```
 wrangler.jsonc   — the Worker config: hostname → folder map, custom domains
 src/index.js     — ~20 lines: rewrites cv.leahcrhunter.com/x → /cv/x and serves it
+src/kitchen/     — login and /api/ for kitchen.leahcrhunter.com (the one site with a backend)
+migrations/      — D1 database schema (kitchen)
 sites/           — the public files; every folder here is one site
 ```
 

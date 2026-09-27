@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>a light for you</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dusk-deep: #0b1f1a;
+    --dusk-indigo: #111b2e;
+    --moss: #4e7a5e;
+    --firefly: #f5c24c;
+    --firefly-soft: #ffd37a;
+    --paper: #f2efe4;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 20%, var(--dusk-indigo) 0%, var(--dusk-deep) 65%, #060f0c 100%);
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+  }
+
+  #fireflies {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .firefly {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--firefly);
+    box-shadow: 0 0 6px 2px var(--firefly-soft), 0 0 14px 6px rgba(245, 194, 76, 0.35);
+    animation: drift linear infinite, flicker ease-in-out infinite;
+  }
+
+  @keyframes drift {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(var(--dx), var(--dy)); }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 1; }
+  }
+
+  main {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    text-align: center;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-optical-sizing: auto;
+    font-size: clamp(26px, 4vw, 38px);
+    color: var(--paper);
+    margin: 0 0 6px;
+    letter-spacing: 0.2px;
+  }
+
+  .subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--moss);
+    margin-bottom: 22px;
+    opacity: 0.9;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--moss);
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  .status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--firefly);
+    box-shadow: 0 0 8px 2px rgba(245, 194, 76, 0.6);
+    animation: flicker 2.4s ease-in-out infinite;
+  }
+
+  .frame {
+    width: min(920px, 92vw);
+    border-radius: 14px;
+    padding: 10px;
+    background: linear-gradient(160deg, rgba(78, 122, 94, 0.25), rgba(11, 31, 26, 0.4));
+    border: 1px solid rgba(245, 194, 76, 0.18);
+    box-shadow: 0 0 60px rgba(245, 194, 76, 0.08), 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  video {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    background: #000;
+  }
+
+  .offline {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    color: var(--paper);
+    opacity: 0.85;
+    padding: 60px 24px;
+  }
+
+  .offline span {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--moss);
+    margin-top: 10px;
+    font-style: normal;
+  }
+
+  /* Firefly jar, tucked quietly in the corner */
+  #jar-wrap {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 3;
+    opacity: 0.85;
+    transition: opacity 0.4s ease;
+  }
+
+  #jar-wrap:hover {
+    opacity: 1;
+  }
+
+  .jar-firefly-group {
+    transform-origin: center;
+    animation: jarFlicker 3.2s ease-in-out infinite;
+  }
+
+  .jar-firefly-group.lit {
+    animation: jarFlickerLit 2.2s ease-in-out infinite;
+  }
+
+  .jar-firefly {
+    transform-origin: center;
+    fill: var(--firefly-soft);
+    filter: drop-shadow(0 0 2px rgba(255, 211, 122, 0.6));
+    transition: fill 0.7s ease, filter 0.7s ease;
+  }
+
+  .jar-firefly-group.lit .jar-firefly {
+    fill: #fffdf6;
+    filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
+  }
+
+  @keyframes jarFlicker {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes jarFlickerLit {
+    0%, 100% { opacity: 0.88; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes wander0 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2.5px, -2px); } }
+  @keyframes wander1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2px, 2.5px); } }
+  @keyframes wander2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, 2px); } }
+  @keyframes wander3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2.5px, -1.5px); } }
+  @keyframes wander4 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(1.5px, -2.5px); } }
+</style>
+</head>
+<body>
+
+<div id="fireflies"></div>
+
+<div id="jar-wrap" title="little lights, for whoever's here">
+  <svg width="56" height="66" viewBox="0 0 56 66" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="jarGlass" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(242,239,228,0.11)"/>
+        <stop offset="100%" stop-color="rgba(242,239,228,0.03)"/>
+      </linearGradient>
+      <clipPath id="jarClip">
+        <rect x="10" y="12" width="36" height="42" rx="8"/>
+      </clipPath>
+    </defs>
+
+    <!-- lid -->
+    <rect x="17" y="4" width="22" height="10" rx="4" fill="#c9a97e"/>
+    <rect x="17" y="4" width="22" height="4" rx="2" fill="#dab98c"/>
+
+    <!-- jar body: rounded square -->
+    <rect x="10" y="12" width="36" height="42" rx="8"
+          fill="url(#jarGlass)" stroke="rgba(245,194,76,0.35)" stroke-width="1.5"/>
+
+    <!-- glassy highlight -->
+    <path d="M18 18 q-1 20 2 34" stroke="rgba(255,255,255,0.12)" stroke-width="3"
+          fill="none" stroke-linecap="round" clip-path="url(#jarClip)"/>
+
+    <!-- fireflies, wandering inside the jar -->
+    <g clip-path="url(#jarClip)">
+      <g class="jar-firefly-group" data-idx="0">
+        <circle class="jar-firefly" style="animation: wander0 7s ease-in-out infinite" cx="20" cy="26" r="2.6"/>
+      </g>
+      <g class="jar-firefly-group" data-idx="1">
+        <circle class="jar-firefly" style="animation: wander1 8s ease-in-out infinite" cx="36" cy="24" r="2.6"/>
+      </g>
+      <g class="jar-firefly-group" data-idx="2">
+        <circle class="jar-firefly" style="animation: wander2 6.5s ease-in-out infinite" cx="28" cy="37" r="2.6"/>
+      </g>
+      <g class="jar-firefly-group" data-idx="3">
+        <circle class="jar-firefly" style="animation: wander3 9s ease-in-out infinite" cx="38" cy="44" r="2.6"/>
+      </g>
+      <g class="jar-firefly-group" data-idx="4">
+        <circle class="jar-firefly" style="animation: wander4 7.5s ease-in-out infinite" cx="17" cy="47" r="2.6"/>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<main>
+  <h1>come sit with me a while</h1>
+  <div class="subtitle">i left the light on for you</div>
+  <div class="status"><span class="dot"></span><span id="status-text">getting comfy&hellip;</span></div>
+  <div class="frame">
+    <video id="video" controls playsinline></video>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js"></script>
+<script>
+  // Drifting fireflies (background)
+  const field = document.getElementById('fireflies');
+  const COUNT = 22;
+  for (let i = 0; i < COUNT; i++) {
+    const f = document.createElement('div');
+    f.className = 'firefly';
+    const startX = Math.random() * 100;
+    const startY = Math.random() * 100;
+    const dx = (Math.random() - 0.5) * 200;
+    const dy = (Math.random() - 0.5) * 160;
+    const duration = 14 + Math.random() * 18;
+    const flickerDuration = 2 + Math.random() * 3;
+    f.style.left = startX + 'vw';
+    f.style.top = startY + 'vh';
+    f.style.setProperty('--dx', dx + 'px');
+    f.style.setProperty('--dy', dy + 'px');
+    f.style.animationDuration = duration + 's, ' + flickerDuration + 's';
+    f.style.animationDelay = (Math.random() * -duration) + 's, ' + (Math.random() * -flickerDuration) + 's';
+    field.appendChild(f);
+  }
+
+  // Video playback
+  const streamUrl = 'https://stream.leahcrhunter.com/mystream/live/index.m3u8';
+  const video = document.getElementById('video');
+  const statusText = document.getElementById('status-text');
+
+  function showOffline() {
+    statusText.textContent = 'not here yet';
+    document.querySelector('.frame').innerHTML =
+      '<div class="offline">nothing to see just yet<span>i\'ll light this up the moment i am 💛 come back soon</span></div>';
+  }
+
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(streamUrl);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      statusText.textContent = 'i\'m here';
+      video.play().catch(() => {});
+    });
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) showOffline();
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = streamUrl;
+    video.addEventListener('loadedmetadata', () => {
+      statusText.textContent = 'i\'m here';
+      video.play().catch(() => {});
+    });
+    video.addEventListener('error', showOffline);
+  } else {
+    showOffline();
+  }
+
+  // --- Firefly jar: live viewer presence ---
+  let sessionId = sessionStorage.getItem('fireflySessionId');
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    sessionStorage.setItem('fireflySessionId', sessionId);
+  }
+  const jarFireflies = document.querySelectorAll('.jar-firefly-group');
+
+  function updateJar(count) {
+    const lit = Math.max(0, Math.min(5, count));
+    jarFireflies.forEach((el, idx) => {
+      el.classList.toggle('lit', idx < lit);
+    });
+  }
+
+  async function heartbeat() {
+    try {
+      await fetch('/watch/heartbeat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id: sessionId }),
+      });
+    } catch (e) {}
+  }
+
+  async function pollCount() {
+    try {
+      const res = await fetch('/watch/count');
+      if (res.status === 401) return location.assign('/login'); // signed out in another tab
+      const data = await res.json();
+      updateJar(data.count);
+    } catch (e) {}
+  }
+
+  function leave() {
+    const payload = JSON.stringify({ id: sessionId });
+    navigator.sendBeacon('/watch/leave', new Blob([payload], { type: 'application/json' }));
+  }
+
+  window.addEventListener('pagehide', leave);
+  window.addEventListener('beforeunload', leave);
+
+  heartbeat();
+  pollCount();
+  setInterval(heartbeat, 20000);
+  setInterval(pollCount, 5000);
+</script>
+
+</body>
+</html>
