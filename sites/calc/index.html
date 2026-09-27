@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
 
@@ -23,6 +23,10 @@
   <p class="eyebrow">Pokémon Champions · Regulation M-C</p>
   <h1>VGC Calc</h1>
   <p class="subtitle">Save your team once, pick an opponent, and see the damage ranges both ways — plus who moves first.</p>
+  <div class="team-switcher-wrap">
+    <span class="boosts-label">Active team</span>
+    <div id="team-switcher" class="team-switcher" role="group" aria-label="Active team"></div>
+  </div>
   <nav class="tabs">
     <button class="tab-btn active" data-tab="team">My team</button>
     <button class="tab-btn" data-tab="matchup">Matchup</button>
@@ -36,6 +40,7 @@
     <div class="panel-head">
       <h2>My team</h2>
       <div class="panel-actions">
+        <button id="save-team-btn" class="btn-save">Save team</button>
         <button id="export-team-btn" class="btn-secondary">Export JSON</button>
         <button id="import-team-btn" class="btn-secondary">Import JSON</button>
       </div>
@@ -79,13 +84,7 @@
       </label>
       <div class="boosts-block">
         <span class="boosts-label">Stat stages (−6 to +6)</span>
-        <div class="boosts-grid">
-          <label>Atk <input type="number" class="opp-boost" data-stat="atk" min="-6" max="6" value="0"></label>
-          <label>Def <input type="number" class="opp-boost" data-stat="def" min="-6" max="6" value="0"></label>
-          <label>SpA <input type="number" class="opp-boost" data-stat="spa" min="-6" max="6" value="0"></label>
-          <label>SpD <input type="number" class="opp-boost" data-stat="spd" min="-6" max="6" value="0"></label>
-          <label>Spe <input type="number" class="opp-boost" data-stat="spe" min="-6" max="6" value="0"></label>
-        </div>
+        <div class="boosts-grid" id="opp-boosts"><!-- filled by main.js --></div>
       </div>
     </div>
 
@@ -152,8 +151,8 @@
   </section>
 
   <footer class="disc">
-    Damage math by <a href="https://github.com/smogon/damage-calc">@smogon/calc</a>. Your team is saved in this browser only —
-    use Export JSON to back it up or move it. Stat Point conversion is still a best guess, so treat the numbers as a guide, not gospel.
+    Damage math by <a href="https://github.com/smogon/damage-calc">@smogon/calc</a>. Your teams are saved in this browser only —
+    use Export JSON to back one up or move it. Stat Point conversion is still a best guess, so treat the numbers as a guide, not gospel.
   </footer>
 
 </main>
@@ -163,13 +162,13 @@
      require('./desc') that throws in a real browser. See CONTEXT.md. -->
 <script src="smogon-calc.bundle.js"></script>
 
-<script src="champions-dex.js?v=11"></script>
-<script src="stat-points.js?v=11"></script>
-<script src="calc-engine.js?v=11"></script>
-<script src="team-store.js?v=11"></script>
-<script src="usage-stats.js?v=11"></script>
-<script src="ui.js?v=11"></script>
-<script src="main.js?v=11"></script>
+<script src="champions-dex.js?v=15"></script>
+<script src="stat-points.js?v=15"></script>
+<script src="calc-engine.js?v=15"></script>
+<script src="team-store.js?v=15"></script>
+<script src="usage-stats.js?v=15"></script>
+<script src="ui.js?v=15"></script>
+<script src="main.js?v=15"></script>
 
 <script>
 // ================= firefly ambient background (same as ocean) =================

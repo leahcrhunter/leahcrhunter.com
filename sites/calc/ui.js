@@ -170,6 +170,7 @@ const UI = (() => {
               <input type="number" min="0" max="${StatPoints.MAX_POINTS}" class="f-sp" data-stat="${k}" value="${m.statPoints[k]}">
             </label>`).join('')}
         </div>
+        <p class="sp-total">${spTotalText(m.statPoints)}</p>
         <label class="mega-toggle ${megaShown ? '' : 'hidden'}">Mega Evolution
           <select class="f-mega">${megaOptions(m.species, m.mega)}</select>
         </label>
@@ -178,9 +179,32 @@ const UI = (() => {
         </div>
         <div class="card-footer">
           <button class="btn-danger f-clear" type="button">Clear slot</button>
-          <button class="btn-secondary f-save" type="button">Save</button>
         </div>
       </div>`;
+  }
+
+  function spTotalText(statPoints) {
+    const total = Object.values(statPoints).reduce((a, b) => a + (Number(b) || 0), 0);
+    return `Stat Points: <span class="${total >= StatPoints.MAX_TOTAL ? 'at-cap' : ''}">${total} / ${StatPoints.MAX_TOTAL}</span>`;
+  }
+
+  function readSpread(cardEl) {
+    const spread = {};
+    cardEl.querySelectorAll('.f-sp').forEach((input) => { spread[input.dataset.stat] = input.value; });
+    return spread;
+  }
+
+  // Called as a Stat Point input changes: clamp the edited stat to 32 and to
+  // whatever's left of the 66 total, write the clamped values back, and
+  // refresh the running total.
+  function enforceStatCap(cardEl, editedInput) {
+    const spread = StatPoints.clampSpread(readSpread(cardEl), editedInput && editedInput.dataset.stat);
+    cardEl.querySelectorAll('.f-sp').forEach((input) => {
+      // Leave an empty box alone while typing; it reads as 0.
+      if (input.value === '' && spread[input.dataset.stat] === 0) return;
+      if (Number(input.value) !== spread[input.dataset.stat]) input.value = spread[input.dataset.stat];
+    });
+    cardEl.querySelector('.sp-total').innerHTML = spTotalText(spread);
   }
 
   function renderTeamSlots(team) {
@@ -190,10 +214,7 @@ const UI = (() => {
   }
 
   function readMonFromCard(cardEl) {
-    const statPoints = {};
-    cardEl.querySelectorAll('.f-sp').forEach((input) => {
-      statPoints[input.dataset.stat] = Math.max(0, Math.min(StatPoints.MAX_POINTS, Number(input.value) || 0));
-    });
+    const statPoints = StatPoints.clampSpread(readSpread(cardEl));
     const moves = [...cardEl.querySelectorAll('.f-move')].map((i) => i.value.trim()).filter(Boolean);
     return {
       species: cardEl.querySelector('.f-species').value.trim(),
@@ -226,9 +247,7 @@ const UI = (() => {
             <div class="mon-speed"></div>
             <div class="mon-state">
               <select class="bs-status" aria-label="Status">${statusOptions(st.status)}</select>
-              <div class="stage-grid">
-                ${BOOST_KEYS.map((k) => `<label>${k.charAt(0).toUpperCase() + k.slice(1).replace('sp', 'Sp')}<input type="number" class="bs-boost" data-stat="${k}" min="-6" max="6" value="${st.boosts[k]}"></label>`).join('')}
-              </div>
+              <div class="stage-grid">${boostButtons('bs-boost', st.boosts)}</div>
             </div>
           </div>
           <div class="mon-col mon-deals"><h4>Deals</h4><div class="mon-col-body"></div></div>
@@ -274,15 +293,55 @@ const UI = (() => {
   }
 
   function readBattleStateRow(rowEl) {
-    const boosts = {};
-    rowEl.querySelectorAll('.bs-boost').forEach((input) => {
-      boosts[input.dataset.stat] = clampBoost(input.value);
-    });
-    return { status: rowEl.querySelector('.bs-status').value, boosts };
+    return { status: rowEl.querySelector('.bs-status').value, boosts: readBoosts(rowEl, '.bs-boost') };
   }
 
-  function clampBoost(value) {
-    return Math.max(-6, Math.min(6, Math.trunc(Number(value) || 0)));
+  // Stat stages are steppers: [−] Atk +0 [+], clamped to −6…+6. The
+  // current stage lives in the value's data-value.
+  const BOOST_LABELS = { atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe' };
+  const MAX_BOOST = 6;
+
+  function boostText(n) { return n < 0 ? `−${-n}` : `+${n}`; }
+  function boostClass(v) { return v > 0 ? 'is-boosted' : (v < 0 ? 'is-dropped' : ''); }
+
+  function boostButtons(cls, boosts) {
+    return BOOST_KEYS.map((k) => {
+      const v = boosts[k] || 0;
+      const name = BOOST_LABELS[k];
+      return `<div class="boost-cell ${boostClass(v)}">`
+        + `<button type="button" class="boost-step" data-delta="-1" aria-label="Lower ${name}" ${v <= -MAX_BOOST ? 'disabled' : ''}>−</button>`
+        + `<span class="boost-val ${cls}" data-stat="${k}" data-value="${v}" aria-live="polite">${name} <b>${boostText(v)}</b></span>`
+        + `<button type="button" class="boost-step" data-delta="1" aria-label="Raise ${name}" ${v >= MAX_BOOST ? 'disabled' : ''}>+</button>`
+        + '</div>';
+    }).join('');
+  }
+
+  // `btn` is a − or + stepper; its data-delta is −1 or +1.
+  function stepBoost(btn) {
+    const cell = btn.closest('.boost-cell');
+    const val = cell.querySelector('.boost-val');
+    const next = Math.max(-MAX_BOOST, Math.min(MAX_BOOST, Number(val.dataset.value) + Number(btn.dataset.delta)));
+    val.dataset.value = next;
+    val.querySelector('b').textContent = boostText(next);
+    cell.classList.remove('is-boosted', 'is-dropped');
+    if (boostClass(next)) cell.classList.add(boostClass(next));
+    const [minus, plus] = cell.querySelectorAll('.boost-step');
+    minus.disabled = next <= -MAX_BOOST;
+    plus.disabled = next >= MAX_BOOST;
+  }
+
+  function readBoosts(containerEl, selector) {
+    const boosts = {};
+    containerEl.querySelectorAll(selector).forEach((btn) => { boosts[btn.dataset.stat] = Number(btn.dataset.value) || 0; });
+    return boosts;
+  }
+
+  // Team 1 / Team 2 / Team 3 switcher. summaries: [{ count }, ...].
+  function renderTeamSwitcher(summaries, active) {
+    document.getElementById('team-switcher').innerHTML = summaries.map((s, i) => `
+      <button type="button" class="team-pick ${i === active ? 'active' : ''}" data-team="${i}" aria-pressed="${i === active}">
+        Team ${i + 1} <span class="team-count">${s.count}/6</span>
+      </button>`).join('');
   }
 
   function renderMoveSuggestions(suggestions, checked, extraMoves) {
@@ -327,8 +386,9 @@ const UI = (() => {
 
   return {
     flashSaved,
-    renderTeamSlots, readMonFromCard, renderMoveSuggestions, monDefaults,
-    renderMatchupBoard, updateMatchupResults, readBattleStateRow, battleStateDefaults, clampBoost,
+    renderTeamSlots, renderMonCard, readMonFromCard, renderMoveSuggestions, monDefaults,
+    renderMatchupBoard, updateMatchupResults, readBattleStateRow, battleStateDefaults,
+    boostButtons, stepBoost, readBoosts, enforceStatCap, renderTeamSwitcher,
     setSpeciesList, speciesOptions, speciesLabel, setItemList, itemOptions,
     setLearnsets, movesFor, moveOptions, refreshCardForSpecies,
   };

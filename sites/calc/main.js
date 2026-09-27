@@ -1,5 +1,7 @@
 (async function () {
   let team = TeamStore.load();
+  // True when the My Team cards have edits that "Save team" hasn't stored.
+  let teamDirty = false;
   // Per-slot { status, boosts } for the current matchup. Not persisted.
   let battleState = {};
   let checkedOppMoves = new Set();
@@ -26,12 +28,41 @@
   UI.setItemList(regulation.legal_items || []);
   ChampionsDex.setMegas(regulation.megas || {});
   // Teams saved before Megas were selectable stored `mega: true`.
-  team = team.map((m) => (m && m.mega === true ? { ...m, mega: ChampionsDex.megaFormesFor(m.species)[0] || '' } : m));
+  const migrateMegas = (t) => t.map((m) => (m && m.mega === true ? { ...m, mega: ChampionsDex.megaFormesFor(m.species)[0] || '' } : m));
+  team = migrateMegas(team);
   document.getElementById('opp-species').innerHTML = UI.speciesOptions('');
   document.getElementById('opp-item').innerHTML = UI.itemOptions('');
+  document.getElementById('opp-boosts').innerHTML = UI.boostButtons('opp-boost', {});
 
+  UI.renderTeamSwitcher(TeamStore.summaries(), TeamStore.activeIndex());
   UI.renderTeamSlots(team);
   UI.renderMatchupBoard(team, battleState);   // results filled by the initial recalc() below
+
+  const saveTeamBtn = document.getElementById('save-team-btn');
+  function setDirty(dirty) {
+    teamDirty = dirty;
+    saveTeamBtn.classList.toggle('has-changes', dirty);
+  }
+
+  // Whole team (re)loaded: new team switched to, or an import.
+  function showTeam(newTeam) {
+    team = migrateMegas(newTeam);
+    battleState = {};
+    setDirty(false);
+    UI.renderTeamSwitcher(TeamStore.summaries(), TeamStore.activeIndex());
+    UI.renderTeamSlots(team);
+    UI.renderMatchupBoard(team, battleState); recalc();
+  }
+
+  // ---------- Team switcher ----------
+  document.getElementById('team-switcher').addEventListener('click', (e) => {
+    const btn = e.target.closest('.team-pick');
+    if (!btn) return;
+    const index = Number(btn.dataset.team);
+    if (index === TeamStore.activeIndex()) return;
+    if (teamDirty && !confirm('You have unsaved changes to this team. Switch anyway and lose them?')) return;
+    showTeam(TeamStore.setActive(index));
+  });
 
   // ---------- Tabs ----------
   document.querySelectorAll('.tab-btn').forEach((btn) => {
@@ -47,6 +78,11 @@
   const slotsContainer = document.getElementById('team-slots');
 
   slotsContainer.addEventListener('input', (e) => {
+    setDirty(true);
+    if (e.target.classList.contains('f-sp')) {
+      UI.enforceStatCap(e.target.closest('.mon-card'), e.target);
+      return;
+    }
     if (!e.target.classList.contains('f-species')) return;
     const card = e.target.closest('.mon-card');
     const species = e.target.value.trim();
@@ -54,22 +90,30 @@
     UI.refreshCardForSpecies(card, species);
   });
 
-  slotsContainer.addEventListener('click', (e) => {
-    const card = e.target.closest('.mon-card');
-    if (!card) return;
-    const index = Number(card.dataset.index);
+  slotsContainer.addEventListener('change', () => setDirty(true));
 
-    if (e.target.classList.contains('f-save')) {
-      team = TeamStore.addOrUpdate(team, index, UI.readMonFromCard(card));
-      UI.renderMatchupBoard(team, battleState); recalc();
-      UI.flashSaved(e.target);
-    }
-    if (e.target.classList.contains('f-clear')) {
-      team = TeamStore.addOrUpdate(team, index, null);
-      delete battleState[index];
-      UI.renderTeamSlots(team);
-      UI.renderMatchupBoard(team, battleState); recalc();
-    }
+  // Clear only resets the card; nothing is stored until Save team.
+  slotsContainer.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('f-clear')) return;
+    const card = e.target.closest('.mon-card');
+    card.outerHTML = UI.renderMonCard(null, Number(card.dataset.index));
+    setDirty(true);
+  });
+
+  // Save all six cards at once. An empty species means an empty slot.
+  saveTeamBtn.addEventListener('click', () => {
+    const cards = [...slotsContainer.querySelectorAll('.mon-card')];
+    team = cards.map((card) => {
+      const mon = UI.readMonFromCard(card);
+      return mon.species ? mon : null;
+    });
+    TeamStore.save(team);
+    // Battle state belongs to a slot's Pokémon; drop it where that changed.
+    Object.keys(battleState).forEach((i) => { if (!team[i]) delete battleState[i]; });
+    setDirty(false);
+    UI.renderTeamSwitcher(TeamStore.summaries(), TeamStore.activeIndex());
+    UI.renderMatchupBoard(team, battleState); recalc();
+    UI.flashSaved(saveTeamBtn);
   });
 
   // ---------- Export / Import ----------
@@ -85,10 +129,7 @@
       return;
     }
     try {
-      team = TeamStore.importJson(ieArea.value);
-      battleState = {};
-      UI.renderTeamSlots(team);
-      UI.renderMatchupBoard(team, battleState); recalc();
+      showTeam(TeamStore.importJson(ieArea.value));
     } catch (err) {
       alert(`Import failed: ${err.message}`);
     }
@@ -141,21 +182,23 @@
   document.getElementById('matchup-board').addEventListener('change', (e) => {
     const row = e.target.closest('.mon-row[data-index]');
     if (!row) return;
-    if (e.target.classList.contains('bs-boost')) e.target.value = UI.clampBoost(e.target.value);
     battleState[Number(row.dataset.index)] = UI.readBattleStateRow(row);
   });
 
-  // ---------- Opponent battle state ----------
-  document.querySelectorAll('.opp-boost').forEach((input) => {
-    input.addEventListener('change', () => { input.value = UI.clampBoost(input.value); });
+  // Boost buttons (both sides) don't fire `change`, so they save their
+  // row's state and recalc themselves.
+  document.getElementById('tab-matchup').addEventListener('click', (e) => {
+    const btn = e.target.closest('.boost-step');
+    if (!btn) return;
+    UI.stepBoost(btn);
+    const row = btn.closest('.mon-row[data-index]');
+    if (row) battleState[Number(row.dataset.index)] = UI.readBattleStateRow(row);
+    recalc();
   });
 
+  // ---------- Opponent battle state ----------
   function readOppBoosts() {
-    const boosts = {};
-    document.querySelectorAll('.opp-boost').forEach((input) => {
-      boosts[input.dataset.stat] = UI.clampBoost(input.value);
-    });
-    return boosts;
+    return UI.readBoosts(document.getElementById('opp-boosts'), '.opp-boost');
   }
 
   // ---------- Field ----------

@@ -175,6 +175,22 @@ Mega-override mechanism above. The working file is
 `smogon-calc.bundle.js` in the scaffold — **this is the one
 `index.html` loads. Don't swap back to the package's own dist files.**
 
+## Teams, saving and boosts (changed 27 Sep 2026)
+
+- **Three teams.** `TeamStore` keeps `{ active, teams: [[…], […], […]] }`
+  under `vgc-calc:teams`; an old single-team save (`vgc-calc:my-team`) is
+  carried into Team 1 on first load. The Team 1/2/3 switcher sits in the
+  header, so it applies to both tabs. Export/Import act on the active team.
+- **Save team, not save slot.** One "Save team" button stores all six cards
+  at once; editing marks it with a dot, and switching teams with unsaved
+  edits asks first. "Clear slot" only resets the card until you save.
+- **Stat Point caps.** Each stat is capped at 32 and the six together at 66
+  (`StatPoints.clampSpread`); the stat being edited is the one that gets
+  trimmed, and each card shows a running total.
+- **Stage steppers.** Each stat stage on the Matchup tab reads
+  `[−] Atk +0 [+]`, clamped to −6…+6 (the button at the limit disables).
+  Raised stages show gold, dropped ones red.
+
 ## Matchup board (layout changed 19 Sep 2026)
 
 The Matchup tab is: opponent & field → opponent's move chips → **one row
@@ -192,7 +208,7 @@ which only touches the result cells so inputs keep focus. Status moves show
 The Matchup tab now carries *battle state* on top of the saved team build:
 
 - **Status and stat stages, both sides.** The opponent form has a status
-  select and Atk/Def/SpA/SpD/Spe stage inputs (−6…+6); each of my Pokémon
+  select and Atk/Def/SpA/SpD/Spe stage buttons (−6…+6; see below); each of my Pokémon
   has the same controls on its own row of the matchup board. These are passed straight
   into `calc.Pokemon` as `status` / `boosts`, so burn halving physical
   damage, Guts, Facade, paralysis speed, etc. are all the engine's own

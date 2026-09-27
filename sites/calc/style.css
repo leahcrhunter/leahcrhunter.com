@@ -619,3 +619,91 @@ footer.disc {
 @media (prefers-reduced-motion: reduce) {
   .tab-panel.active { animation: none; }
 }
+
+/* ---------- active team switcher (header) ---------- */
+.team-switcher-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: -10px 0 18px;
+  color: var(--cream-soft);
+}
+.team-switcher { display: flex; flex-wrap: wrap; gap: 6px; }
+.team-pick {
+  background: transparent;
+  color: var(--cream-soft);
+  padding: 6px 14px;
+}
+.team-pick:hover { color: var(--cream); border-color: var(--gold-dim-2); }
+.team-pick.active {
+  color: var(--sky-1);
+  background: var(--gold);
+  border-color: var(--gold);
+  font-weight: 600;
+}
+.team-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; opacity: 0.75; margin-left: 4px; }
+
+/* ---------- Save team ---------- */
+.btn-save {
+  background: var(--gold);
+  color: var(--sky-1);
+  border-color: var(--gold);
+  padding: 6px 16px;
+  font-weight: 600;
+}
+.btn-save:hover { background: var(--gold-glint); }
+.btn-save.has-changes { box-shadow: 0 0 0 3px var(--gold-dim), 0 0 16px rgba(244, 213, 141, 0.4); }
+.btn-save.has-changes::after { content: ' •'; }
+.btn-save.is-saved { background: var(--good); border-color: var(--good); }
+
+/* ---------- Stat Point total ---------- */
+.sp-total {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--cream-soft);
+  text-align: right;
+}
+.sp-total span { font-family: 'IBM Plex Mono', monospace; color: var(--cream); }
+.sp-total span.at-cap { color: var(--gold); }
+
+/* ---------- stat stage steppers (Matchup tab): [−] Atk +0 [+] ---------- */
+.boost-cell {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  background: var(--well);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.boost-cell.is-boosted { border-color: var(--gold-dim-2); background: var(--gold-dim); }
+.boost-cell.is-dropped { border-color: rgba(230, 154, 134, 0.45); background: rgba(230, 154, 134, 0.1); }
+.boost-step {
+  flex: 0 0 auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--cream-soft);
+  padding: 6px 9px;
+  font-size: 15px;
+  line-height: 1;
+}
+.boost-step:hover { background: var(--panel-strong); color: var(--cream); }
+.boost-step:disabled { opacity: 0.3; cursor: default; background: transparent; }
+.boost-val {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--cream-soft);
+}
+.boost-val b { font-family: 'IBM Plex Mono', monospace; font-weight: 500; color: var(--cream); }
+.boost-cell.is-boosted .boost-val b { color: var(--gold); }
+.boost-cell.is-dropped .boost-val b { color: var(--bad); }
+.boosts-grid { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+.stage-grid { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 5px; }
