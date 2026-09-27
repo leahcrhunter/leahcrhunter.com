@@ -63,3 +63,23 @@ hostname in `routes` (the landing page).
    once the Worker is live.
 
 Or from a terminal: `npx wrangler login && npx wrangler deploy`.
+
+## Licence
+
+Everything in this repo is released under the [MIT License](LICENSE)
+(© 2026 Leah C. R. Hunter), **except** the third-party material below, which
+stays under its owners' terms:
+
+- `sites/calc/smogon-calc.bundle.js`: a build of
+  [`@smogon/calc`](https://github.com/smogon/damage-calc), MIT-licensed by
+  Honko and other contributors, see
+  [`sites/calc/SMOGON-CALC-LICENSE`](sites/calc/SMOGON-CALC-LICENSE).
+- `sites/calc/usage-mc.json`, `learnsets-mc.json` and `regulation-mc.json`:
+  data compiled from Pikalytics and Serebii.
+- Pokémon names and game data are © Nintendo / Creatures / GAME FREAK; this
+  project is unofficial and not affiliated with them.
+- PeerJS and any other library loaded from a CDN is under its own licence.
+
+My CV (the text and content in `sites/cv/`) is **not** open source:
+© 2026 Leah C. R. Hunter, all rights reserved. The code and styling around it
+(HTML structure, CSS, JS) are MIT like the rest.

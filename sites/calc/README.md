@@ -164,8 +164,13 @@ calc.getFinalSpeed = util.getFinalSpeed;
 window.calc = calc;
 EOF
 npx esbuild entry.js --bundle --platform=browser --format=iife --minify \
+  --banner:js='/*! @smogon/calc v0.11.0 | MIT License | Copyright (c) 2013-2025 Honko and other contributors | https://github.com/smogon/damage-calc | full text: SMOGON-CALC-LICENSE */' \
   --outfile=smogon-calc.bundle.js
 ```
+
+`@smogon/calc` is MIT-licensed; its licence text is kept alongside the bundle
+in [`SMOGON-CALC-LICENSE`](SMOGON-CALC-LICENSE), and the `--banner` above keeps
+the copyright notice at the top of the bundle itself. Keep both if you rebuild.
 
 This was tested end-to-end in a Node shim (`global.window = {}`, then
 `vm.runInThisContext` on the bundle) and confirmed working, including
