@@ -8,6 +8,8 @@ import { findRecipe } from "./find.js";
 
 const LOCATIONS = ["fridge", "freezer", "cupboard", "spice rack"];
 const BASE_UNITS = ["g", "ml", "count"];
+// same as PACKS in sites/kitchen/js/units.js
+const PACKS = ["tin", "jar", "bottle", "bag", "pack"];
 const REASONS = ["used", "cooked", "used up", "thrown away"];
 
 class BadRequest extends Error {}
@@ -40,8 +42,12 @@ const INGREDIENT = {
 
 const PANTRY = {
   ingredient_id: id,
+  // what this batch is called, when that's not the ingredient's name
+  // ("sunflower oil" linked to "vegetable oil"); null shows the ingredient's
+  name: (v) => text(v, 100),
   quantity: num,
   unit: oneOf(BASE_UNITS),
+  pack: (v) => (v == null || v === "" ? null : oneOf(PACKS)(v)),
   location: oneOf(LOCATIONS),
   purchased: (v) => date(v) || bad("purchased date is required"),
   expires: date,
@@ -87,34 +93,10 @@ function update(db, table, rowId, row) {
     .bind(...Object.values(row), rowId);
 }
 
-// The same food in the same place is one pantry row, not several: after
-// every write, batches that match on ingredient, location and unit are merged
-// into the oldest row. The merged row keeps the earliest use-by (so "use soon"
-// still warns about the older food), the latest purchase date, and is "some"
-// if any batch was unmeasured. Same SQL as migrations/kitchen/0003.
-const SAME = "p.ingredient_id = pantry_items.ingredient_id AND p.location = pantry_items.location AND p.unit = pantry_items.unit";
-const MERGE_PANTRY = [
-  `UPDATE pantry_items SET
-     quantity  = (SELECT CASE WHEN count(p.quantity) = count(*) THEN sum(p.quantity) END FROM pantry_items p WHERE ${SAME}),
-     expires   = (SELECT min(p.expires) FROM pantry_items p WHERE ${SAME}),
-     purchased = (SELECT max(p.purchased) FROM pantry_items p WHERE ${SAME}),
-     opened    = (SELECT min(p.opened) FROM pantry_items p WHERE ${SAME}),
-     notes     = (SELECT coalesce(group_concat(DISTINCT p.notes), '') FROM pantry_items p WHERE ${SAME} AND p.notes != '')
-   WHERE id IN (SELECT min(id) FROM pantry_items GROUP BY ingredient_id, location, unit HAVING count(*) > 1)`,
-  // a ticked list item points at the batch it created; follow it into the merged row
-  `UPDATE shopping_list SET pantry_item_id = (
-     SELECT min(p.id) FROM pantry_items k JOIN pantry_items p
-       ON p.ingredient_id = k.ingredient_id AND p.location = k.location AND p.unit = k.unit
-     WHERE k.id = shopping_list.pantry_item_id)
-   WHERE pantry_item_id IS NOT NULL`,
-  `DELETE FROM pantry_items WHERE id NOT IN (SELECT min(id) FROM pantry_items GROUP BY ingredient_id, location, unit)`,
-];
-
-// Runs the statements as one transaction, tidies the pantry, and bumps rev.
+// Runs the statements as one transaction and bumps rev.
 async function write(db, statements) {
   const results = await db.batch([
     ...statements,
-    ...MERGE_PANTRY.map((sql) => db.prepare(sql)),
     db.prepare("UPDATE meta SET value = value + 1 WHERE key = 'rev' RETURNING value"),
   ]);
   return { results, rev: results.at(-1).results[0].value };
@@ -414,16 +396,9 @@ const routes = {
       ]);
     }
     if (!body.ticked && row.ticked) {
-      // Take back what the tick added. It may have been merged into food that
-      // was already there, so subtract when we can rather than delete.
-      const item = row.pantry_item_id && (await db.prepare("SELECT * FROM pantry_items WHERE id = ?").bind(row.pantry_item_id).first());
+      // Take back the batch the tick added.
       const statements = [];
-      if (item) {
-        const partial = item.quantity != null && row.quantity != null && item.unit === (row.unit || row.default_unit) && item.quantity - row.quantity > 1e-6;
-        statements.push(partial
-          ? db.prepare("UPDATE pantry_items SET quantity = quantity - ? WHERE id = ?").bind(row.quantity, item.id)
-          : db.prepare("DELETE FROM pantry_items WHERE id = ?").bind(item.id));
-      }
+      if (row.pantry_item_id) statements.push(db.prepare("DELETE FROM pantry_items WHERE id = ?").bind(row.pantry_item_id));
       statements.push(db.prepare("UPDATE shopping_list SET ticked = 0, pantry_item_id = NULL WHERE id = ?").bind(row.id));
       return write(db, statements);
     }

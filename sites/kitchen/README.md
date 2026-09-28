@@ -20,9 +20,11 @@ Build phases 1 to 4 of the plan, plus the dinner planner and a web recipe finder
   away, move (into the freezer pushes the use-by out 3 months), opened today;
   a "use soon" section at the top; filter by where it lives; a quick check
   that walks one shelf as a checklist. Everything that leaves the pantry is
-  written to the usage log. The same food in the same place is always one
-  row: adding more milk to the fridge tops up the milk that's there (keeping
-  the earlier use-by, so "use soon" still warns about the older carton).
+  written to the usage log. Each batch keeps the name you gave it ("sunflower
+  oil", "red pepper") while counting as a shared ingredient ("vegetable oil",
+  "pepper") for recipes; edit a batch to rename it or change what it counts as.
+  Tins, jars, bottles, bags and packs are kept as that many of them ("2 tins",
+  "a bag"); a bag or pack counts as "some" for recipes, not as one potato.
 - **Recipes**: paste a link (reads the schema.org data recipe sites publish)
   or type it in; ingredient lines are matched to the ingredients list, and you
   can correct the matches before saving. Each card has have / need bulbs, a

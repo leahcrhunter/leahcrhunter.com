@@ -276,6 +276,7 @@ select { appearance: none; background-image: linear-gradient(45deg, transparent 
 .row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .row-name { font-size: 0.98rem; }
 .row-meta { font-size: 0.78rem; color: var(--cream-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-note { font-size: 0.78rem; color: var(--cream-soft); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row-qty { flex: none; font-size: 0.9rem; color: var(--cream-soft); font-variant-numeric: tabular-nums; }
 .p-row.soon .row-meta { color: var(--amber); }
 .p-row.expired .row-meta { color: var(--rose); }

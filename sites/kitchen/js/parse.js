@@ -84,7 +84,7 @@ export function parseLine(original) {
       // "400g tin of chopped tomatoes": the weight is the useful bit, drop the container
       // "200g / 6 oz chicken": keep the first measurement, drop the conversion
       s = s.replace(/^\/\s*[\d.,½¼¾⅓⅔]+\s*[a-z.]+\s*/i, "");
-      if (["g", "ml"].includes(unit)) s = s.replace(/^(tins?|cans?|jars?|packs?|packets?|bags?)\b\s*(of\s+)?/i, "");
+      if (["mass", "vol"].includes(UNITS[unit]?.dim)) s = s.replace(/^(tins?|cans?|jars?|packs?|packets?|bags?)\b\s*(of\s+)?/i, "");
     }
   }
   if (qty != null && !unit) unit = "count";
@@ -107,6 +107,8 @@ export function parseLine(original) {
       name = words.join(" ");
     }
   }
+  // "pepper, to taste" or "a pinch of pepper" is black pepper; "2 peppers" is the vegetable
+  if (name.toLowerCase() === "pepper" && (qty == null || UNITS[unit]?.dim === "any")) name = "black pepper";
   return { qty, unit, name, optional, original: String(original).trim() };
 }
 
@@ -166,17 +168,36 @@ function indexOf(ingredients) {
   return index;
 }
 
+// Words that start the part of a name describing what the food comes in or
+// with: "beans in chilli sauce" is beans, not chilli.
+const JOINERS = new Set(["in", "with", "of", "and", "on"]);
+
 // Best ingredient for a free-text name, or null. Tries the whole name, then
 // without preparation words, then the longest run of words that matches
 // (preferring the end: "chopped red onion" finds "red onion" before "onion").
-export function matchIngredient(name, ingredients) {
+//
+// `strict` is for food typed into the pantry on purpose: past the whole name,
+// only the end of its main part may match ("smoked streaky bacon" is bacon),
+// and anything else is a new ingredient. `pack` is the container it came in:
+// "1 tin of tomatoes" means tinned tomatoes, not fresh ones.
+export function matchIngredient(name, ingredients, { strict = false, pack = null } = {}) {
   const index = indexOf(ingredients);
   const full = normName(name);
   if (!full) return null;
-  if (index.has(full)) return index.get(full);
   const words = full.split(" ");
   const core = words.filter((w) => !DESCRIPTORS.has(w));
-  if (index.has(core.join(" "))) return index.get(core.join(" "));
+  for (const pre of pack === "tin" ? ["tinned ", "canned ", ""] : [""]) {
+    for (const key of [full, core.join(" ")]) if (index.has(pre + key)) return index.get(pre + key);
+  }
+  if (strict) {
+    const cut = core.findIndex((w, i) => i > 0 && JOINERS.has(w));
+    const head = cut > 0 ? core.slice(0, cut) : core;
+    for (let len = head.length; len >= 1; len--) {
+      const key = head.slice(-len).join(" ");
+      if (index.has(key)) return index.get(key);
+    }
+    return null;
+  }
   for (const ws of [core, words]) {
     for (let len = ws.length - 1; len >= 1; len--) {
       for (let start = ws.length - len; start >= 0; start--) {

@@ -5,7 +5,7 @@ import { store, prefs, mutate, api, today, fmtDay } from "./store.js";
 import { h, clear, bulb, sheet, toast, run, qtyInput, emptyState } from "./ui.js";
 import { UNITS, fmtLineQty, fmtBase, convert, plural } from "./units.js";
 import { parseLine, matchIngredient, newIngredientName } from "./parse.js";
-import { checkLine, batchesOf, planUse, ensureIngredient, shoppingFor } from "./stock.js";
+import { checkLine, batchesOf, planUse, ensureIngredient, shoppingFor, unmeasured } from "./stock.js";
 import { field } from "./pantry.js";
 
 const view = { search: "", tag: null, canMake: false, quick: false, loved: false };
@@ -298,7 +298,7 @@ function cookSheet(r, scale) {
     const inputs = inStock.map((row) => {
       const q = qtyInput(row.base, row.amount || null, { ing: row.ing, label: `${row.ing.name} used` });
       const on = h("input", { type: "checkbox", checked: row.amount > 0, "aria-label": `take ${row.ing.name} out of the pantry` });
-      const total = batchesOf(row.ing.id).reduce((s, b) => (s == null || b.quantity == null ? null : s + (convert(b.quantity, b.unit, row.base, row.ing) ?? 0)), 0);
+      const total = batchesOf(row.ing.id).reduce((s, b) => (s == null || unmeasured(b) ? null : s + (convert(b.quantity, b.unit, row.base, row.ing) ?? 0)), 0);
       return {
         row, q, on,
         el: h("li", { class: "cook-row" },

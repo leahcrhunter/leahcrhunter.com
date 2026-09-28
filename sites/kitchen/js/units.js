@@ -87,6 +87,11 @@ export const UNIT_WORDS = {
 };
 
 export const BASE_OF = { mass: "g", vol: "ml", count: "count" };
+
+// Containers a pantry batch can be kept as ("2 tins", "a bag"). A tin, jar or
+// bottle is one of the thing; a bag or pack holds an unknown amount.
+export const PACKS = ["tin", "jar", "bottle", "bag", "pack"];
+export const MULTI_PACKS = ["bag", "pack"];
 const DIM_OF_BASE = { g: "mass", ml: "vol", count: "count" };
 
 // Converts qty (in any unit above) to one of the base units, going via

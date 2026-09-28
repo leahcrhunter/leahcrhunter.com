@@ -153,7 +153,7 @@ export function mountMake(pane) {
       for (const item of store.pantry) {
         const ing = store.ing.get(item.ingredient_id);
         if (!ing || ing.category === "household") continue;
-        (["soon", "expired"].includes(freshness(item)) ? soon : have).push(ing.name);
+        (["soon", "expired"].includes(freshness(item)) ? soon : have).push(item.name || ing.name);
       }
     }
     searching = true;

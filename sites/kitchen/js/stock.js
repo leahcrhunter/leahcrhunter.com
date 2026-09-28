@@ -2,7 +2,7 @@
 // recipe asks for. Used by the pantry, the recipe cards and the list.
 
 import { store, mutate } from "./store.js";
-import { UNITS, BASE_OF, convert } from "./units.js";
+import { UNITS, BASE_OF, MULTI_PACKS, convert } from "./units.js";
 import { matchIngredient, newIngredientName } from "./parse.js";
 
 // Batches of one ingredient, soonest use-by first (no date last).
@@ -11,6 +11,10 @@ export function batchesOf(ingredientId) {
     .filter((p) => p.ingredient_id === ingredientId)
     .sort((a, b) => (a.expires || "9999").localeCompare(b.expires || "9999") || a.id - b.id);
 }
+
+// A batch whose amount can't be compared with a recipe: "some", or a bag or
+// pack of something (a bag of potatoes isn't one potato).
+export const unmeasured = (b) => b.quantity == null || MULTI_PACKS.includes(b.pack);
 
 // For one recipe line (scaled): status is
 //   'have'    enough in the pantry (or it's salt/oil/water, or unmeasurable)
@@ -36,7 +40,7 @@ export function checkLine(line, scale = 1) {
   const wanted = line.quantity * scale * u.f;
   let have = 0;
   for (const b of batches) {
-    if (b.quantity == null) return { status: "have" }; // "some": give it the benefit of the doubt
+    if (unmeasured(b)) return { status: "have" }; // "some": give it the benefit of the doubt
     const v = convert(b.quantity, b.unit, base, ing);
     if (v == null) return { status: "have" }; // can't compare (no density etc.): assume fine
     have += v;
@@ -58,6 +62,7 @@ export function planUse(ingredientId, amount, base) {
   let left = amount;
   for (const b of batchesOf(ingredientId)) {
     if (left <= 1e-9) break;
+    if (MULTI_PACKS.includes(b.pack)) continue; // cooking doesn't use up a whole bag: take it out by hand
     if (b.quantity == null) {
       uses.push({ id: b.id, quantity: null }); // "some": can't measure, so assume we used it up
       break;
@@ -97,7 +102,7 @@ export function shoppingFor(entries) {
     const base = ing.default_unit;
     // null means "some, can't say how much", which counts as enough
     const total = (rows) => rows.reduce((sum, r) => {
-      if (sum == null || r.quantity == null) return null;
+      if (sum == null || unmeasured(r)) return null;
       const v = convert(r.quantity, r.unit || base, base, ing);
       return v == null ? null : sum + v;
     }, 0);
@@ -123,8 +128,9 @@ export function shoppingFor(entries) {
 
 // Finds the ingredient for a typed name, creating it if it's new.
 // `hint` guesses the new ingredient's unit and storage.
+// `strict` and `pack` go to matchIngredient.
 export async function ensureIngredient(name, hint = {}) {
-  const found = matchIngredient(name, store.ingredients);
+  const found = matchIngredient(name, store.ingredients, { strict: hint.strict, pack: hint.unit });
   if (found) return found;
   const clean = newIngredientName(name);
   if (!clean) throw new Error("what's it called?");
