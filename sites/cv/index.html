@@ -14,14 +14,31 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* Cream paper page, with the leahcrhunter.com night sky kept to the
+     header band and the contact card. Dark areas re-scope the same tokens. */
   :root {
-    --paper: #FBFBF8;
-    --ink: #1C2420;
-    --ink-soft: #4A524C;
-    --pine: #2F6F5E;
-    --pine-tint: #EAF1EE;
-    --brass: #B08D57;
-    --line: #DCD9CE;
+    --paper: #FAF8F3;
+    --paper-raised: #FFFFFF;
+    --ink: #1E1D36;
+    --ink-soft: #4D4B5C;
+    --ink-faint: #85828F;
+    --accent: #8A6326;
+    --accent-tint: rgba(176, 132, 52, 0.10);
+    --line: #E4DFD3;
+    --glow: #F4D58D;
+    --glow-core: #FFF4D6;
+    --sky-top: #141530;
+    --sky-bottom: #33295A;
+  }
+
+  nav, .sky, .contact-cta {
+    --ink: #F4EEE0;
+    --ink-soft: rgba(244, 238, 224, 0.72);
+    --ink-faint: rgba(244, 238, 224, 0.5);
+    --accent: var(--glow);
+    --accent-tint: rgba(244, 213, 141, 0.1);
+    --line: rgba(244, 238, 224, 0.16);
+    color: var(--ink);
   }
 
   * { box-sizing: border-box; }
@@ -37,6 +54,15 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  ::selection { background: rgba(244, 213, 141, 0.45); }
+
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
   .page {
     max-width: 760px;
     margin: 0 auto;
@@ -47,8 +73,9 @@
   nav {
     position: sticky;
     top: 0;
-    background: rgba(251,251,248,0.92);
-    backdrop-filter: blur(6px);
+    background: rgba(20, 21, 48, 0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
     z-index: 10;
   }
@@ -65,9 +92,24 @@
 
   .nav-name {
     font-family: 'Newsreader', serif;
+    font-style: italic;
     font-size: 17px;
-    font-weight: 500;
+    font-weight: 400;
     white-space: nowrap;
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-name::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--glow-core);
+    box-shadow: 0 0 6px 2px rgba(244, 213, 141, 0.55);
   }
 
   .nav-links {
@@ -81,13 +123,32 @@
     font-size: 14px;
     color: var(--ink-soft);
     text-decoration: none;
+    transition: color 0.25s ease;
   }
 
-  .nav-links a:hover { color: var(--pine); }
+  .nav-links a:hover { color: var(--accent); }
 
-  /* Hero */
+  /* Hero: a dusk sky band with a few drifting fireflies */
+  .sky {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  }
+
+  #skyFlies {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+  }
+
   header.hero {
-    padding: 64px 0 40px;
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 72px 28px 56px;
   }
 
   h1 {
@@ -103,7 +164,7 @@
     font-family: 'Newsreader', serif;
     font-style: italic;
     font-size: 19px;
-    color: var(--pine);
+    color: var(--accent);
     margin: 0 0 6px;
   }
 
@@ -124,20 +185,21 @@
   }
 
   .contact a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--line); }
-  .contact a:hover { color: var(--pine); border-color: var(--pine); }
+  .contact a:hover { color: var(--accent); border-color: var(--accent); }
 
   .print-btn {
     font-family: inherit;
     font-size: 13px;
-    color: var(--pine);
+    color: var(--accent);
     background: transparent;
-    border: 1px solid var(--pine);
+    border: 1px solid var(--accent);
     border-radius: 3px;
     padding: 5px 12px;
     cursor: pointer;
+    transition: background 0.25s ease;
   }
 
-  .print-btn:hover { background: var(--pine-tint); }
+  .print-btn:hover { background: var(--accent-tint); }
 
   /* Highlights strip */
   .highlights {
@@ -146,11 +208,13 @@
     gap: 1px;
     background: var(--line);
     border: 1px solid var(--line);
-    margin-bottom: 56px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 40px 0 56px;
   }
 
   .highlight-item {
-    background: var(--paper);
+    background: var(--paper-raised);
     padding: 20px 16px;
     text-align: left;
     flex: 1 1 160px;
@@ -159,7 +223,7 @@
   .highlight-number {
     font-family: 'Newsreader', serif;
     font-size: 28px;
-    color: var(--pine);
+    color: var(--accent);
     display: block;
     line-height: 1;
     margin-bottom: 6px;
@@ -176,9 +240,10 @@
   section { margin-bottom: 52px; }
 
   h2 {
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 21px;
     color: var(--ink);
     margin: 0 0 22px;
     padding-bottom: 10px;
@@ -193,7 +258,7 @@
     max-width: 640px;
   }
 
-  .statement .highlight { color: var(--pine); }
+  .statement .highlight { color: var(--accent); }
   .statement p { margin: 0 0 16px; }
   .statement p:last-child { margin-bottom: 0; }
 
@@ -202,8 +267,9 @@
   .edu-entry:last-child { margin-bottom: 0; }
   .edu-degree { font-weight: 600; font-size: 15.5px; }
   .edu-meta { font-size: 14px; color: var(--ink-soft); margin-top: 2px; }
-  .edu-grade { color: var(--brass); font-weight: 600; }
-  /* Positions timeline */
+  .edu-grade { color: var(--accent); font-weight: 600; }
+
+  /* Positions timeline: each role is a firefly on a thread */
   .timeline { position: relative; padding-left: 26px; }
   .timeline::before {
     content: "";
@@ -227,11 +293,13 @@
     height: 9px;
     border-radius: 50%;
     background: var(--paper);
-    border: 1.5px solid var(--pine);
+    border: 1.5px solid var(--accent);
   }
 
   .entry.current::before {
-    background: var(--pine);
+    background: var(--glow);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(244, 213, 141, 0.35), 0 0 12px 3px rgba(244, 213, 141, 0.55);
   }
 
   .entry-head {
@@ -249,7 +317,7 @@
   }
 
   .entry-org {
-    color: var(--pine);
+    color: var(--accent);
     font-weight: 500;
   }
 
@@ -269,11 +337,11 @@
   }
 
   .entry-type {
-    color: var(--brass);
+    color: var(--ink);
     font-weight: 500;
   }
 
-  .entry-meta .sep { color: var(--line); }
+  .entry-meta .sep { color: var(--ink-faint); }
 
   .entry ul {
     margin: 8px 0 0;
@@ -286,9 +354,11 @@
     font-size: 14.5px;
   }
 
+  .entry li::marker, .plain-list li::marker { color: var(--ink-faint); }
+
   .blank {
-    color: var(--brass);
-    background: rgba(176,141,87,0.10);
+    color: var(--accent);
+    background: var(--accent-tint);
     padding: 0 3px;
     border-radius: 2px;
   }
@@ -317,6 +387,7 @@
   }
 
   .expertise-item p + p { margin-top: 8px; }
+  .expertise-item strong { color: var(--ink); font-weight: 600; }
 
   /* Proficiency table */
   .table-wrap { overflow-x: auto; margin-top: 12px; }
@@ -334,7 +405,7 @@
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--ink-soft);
+    color: var(--ink-faint);
     border-bottom: 1px solid var(--line);
     padding: 0 14px 8px 0;
   }
@@ -356,8 +427,8 @@
     padding: 2px 9px;
     border-radius: 2px;
     white-space: nowrap;
-    background: var(--pine-tint);
-    color: var(--pine);
+    background: var(--accent-tint);
+    color: var(--accent);
     border: 1px solid transparent;
   }
 
@@ -371,10 +442,12 @@
   .plain-list { margin: 0; padding-left: 18px; }
   .plain-list li { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 7px; }
 
-  /* Contact CTA */
+  /* Contact CTA: a lit jar in the dark, bookending the header */
   .contact-cta {
-    background: var(--pine-tint);
-    border: 1px solid var(--line);
+    background:
+      radial-gradient(circle at 88% 20%, rgba(244, 213, 141, 0.18), transparent 45%),
+      linear-gradient(160deg, var(--sky-top), var(--sky-bottom));
+    border-radius: 4px;
     padding: 36px 32px;
     text-align: left;
   }
@@ -401,25 +474,31 @@
     display: inline-block;
     font-size: 14px;
     font-weight: 500;
-    color: var(--paper);
-    background: var(--pine);
+    color: var(--sky-top);
+    background: var(--glow);
+    border: 1px solid var(--glow);
     padding: 10px 18px;
     text-decoration: none;
     border-radius: 3px;
+    transition: box-shadow 0.3s ease, background 0.3s ease;
   }
+
+  .cta-link:hover { box-shadow: 0 0 18px rgba(244, 213, 141, 0.45); }
 
   .cta-link.secondary {
     background: transparent;
-    color: var(--pine);
-    border: 1px solid var(--pine);
+    color: var(--glow);
+    border-color: rgba(244, 213, 141, 0.55);
   }
+
+  .cta-link.secondary:hover { background: var(--accent-tint); box-shadow: none; border-color: var(--glow); }
 
   footer {
     margin-top: 60px;
     padding-top: 20px;
     border-top: 1px solid var(--line);
     font-size: 13px;
-    color: var(--ink-soft);
+    color: var(--ink-faint);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -429,11 +508,13 @@
   @media (max-width: 620px) {
     .page { padding: 0 20px 72px; }
     .nav-inner { padding: 14px 20px; }
-    header.hero { padding: 44px 0 32px; }
+    header.hero { padding: 48px 20px 40px; }
     h1 { font-size: 34px; }
+    .highlights { margin-top: 28px; }
     .highlight-item { flex: 1 1 45%; }
     .entry-head { flex-direction: column; }
     .nav-links { gap: 4px 14px; }
+    .contact-cta { padding: 28px 22px; }
 
     /* Restack the proficiency table so nothing scrolls sideways on a phone */
     table.packages { min-width: 0; }
@@ -458,16 +539,26 @@
   @page { margin: 1.6cm; }
 
   @media print {
-    nav, .highlights, .print-btn, .cta-links, .contact-cta { display: none !important; }
+    :root, .sky {
+      --ink: #1C2420;
+      --ink-soft: #3d4440;
+      --ink-faint: #6b706c;
+      --accent: #6b4f1d;
+      --line: #DCD9CE;
+    }
+    nav, #skyFlies, .highlights, .print-btn, .cta-links, .contact-cta { display: none !important; }
     html, body { background: #fff; font-size: 10.5pt; }
+    .sky { background: none; }
     .page { max-width: none; padding: 0; }
-    header.hero { padding: 0 0 18px; }
+    header.hero { max-width: none; padding: 0 0 18px; }
     h1 { font-size: 22pt; margin-bottom: 4px; }
     .role { font-size: 12pt; }
     .tagline { font-size: 10pt; max-width: none; }
     .statement { font-size: 11pt; max-width: none; }
     section { margin-bottom: 20px; }
-    h2 { font-size: 10.5pt; margin-bottom: 14px; page-break-after: avoid; }
+    h2 { font-size: 13pt; margin-bottom: 14px; page-break-after: avoid; }
+    .entry::before { background: #fff; }
+    .entry.current::before { background: var(--accent); box-shadow: none; }
     /* Keep rows and roles whole, but let long blocks flow across pages */
     .entry, .edu-entry, table.packages tr { page-break-inside: avoid; }
     .expertise-item h3, table.packages thead { page-break-after: avoid; }
@@ -485,7 +576,7 @@
 
 <nav>
   <div class="nav-inner">
-    <span class="nav-name">Leah C. R. Hunter</span>
+    <a class="nav-name" href="https://leahcrhunter.com">Leah C. R. Hunter</a>
     <div class="nav-links">
       <a href="#education">Education</a>
       <a href="#positions">Positions</a>
@@ -495,8 +586,8 @@
   </div>
 </nav>
 
-<div class="page">
-
+<div class="sky">
+  <canvas id="skyFlies" aria-hidden="true"></canvas>
   <header class="hero">
     <h1>Leah C. R. Hunter</h1>
     <p class="role">Occupational &amp; Organisational Psychologist · Talent Scientist, Canonical</p>
@@ -509,6 +600,9 @@
       <button class="print-btn" id="printBtn" type="button">Print / save as PDF</button>
     </div>
   </header>
+</div>
+
+<div class="page">
 
   <div class="highlights">
     <div class="highlight-item">
@@ -828,6 +922,95 @@
   document.getElementById('printBtn').addEventListener('click', function () {
     window.print();
   });
+
+  // A handful of slow fireflies behind the header, echoing the homepage.
+  // Calmer than the homepage: no pointer chasing, and paused once scrolled past.
+  (function () {
+    const canvas = document.getElementById('skyFlies');
+    const ctx = canvas.getContext('2d');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function rand(a, b) { return a + Math.random() * (b - a); }
+
+    let W, H, flies = [], visible = true, prevTime = performance.now();
+
+    function resize() {
+      const DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.offsetWidth; H = canvas.offsetHeight;
+      canvas.width = W * DPR; canvas.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+
+    function seed() {
+      const count = Math.max(6, Math.min(14, Math.round(W / 90)));
+      flies = [];
+      for (let i = 0; i < count; i++) {
+        flies.push({
+          x: rand(0, W), y: rand(H * 0.1, H * 0.9),
+          angle: rand(0, Math.PI * 2),
+          wander: rand(0, Math.PI * 2),
+          wanderSpeed: rand(0.003, 0.008),
+          speed: rand(0.1, 0.25),
+          r: rand(1.3, 2.2),
+          glowPhase: rand(0, Math.PI * 2),
+          glowSpeed: rand(0.012, 0.025)
+        });
+      }
+    }
+
+    function draw(f) {
+      const glow = 0.5 + Math.sin(f.glowPhase) * 0.5;
+      const alpha = 0.15 + glow * 0.5;
+      const r = f.r * (1 + glow * 0.5);
+      const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r * 6);
+      g.addColorStop(0, `rgba(244, 213, 141, ${alpha * 0.8})`);
+      g.addColorStop(0.35, `rgba(244, 213, 141, ${alpha * 0.2})`);
+      g.addColorStop(1, 'rgba(244, 213, 141, 0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(f.x, f.y, r * 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(255, 244, 214, ${Math.min(1, alpha + 0.2)})`;
+      ctx.beginPath(); ctx.arc(f.x, f.y, r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function frame(dt) {
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+      flies.forEach((f) => {
+        f.wander += f.wanderSpeed * dt;
+        f.glowPhase += f.glowSpeed * dt;
+        f.angle += Math.sin(f.wander) * 0.012 * dt;
+        f.x += Math.cos(f.angle) * f.speed * dt * 0.5;
+        f.y += Math.sin(f.angle) * f.speed * dt * 0.5;
+        if (f.x < -20) f.x = W + 20;
+        if (f.x > W + 20) f.x = -20;
+        if (f.y < H * 0.05 || f.y > H * 0.95) f.angle = -f.angle;
+        draw(f);
+      });
+    }
+
+    function loop(time) {
+      const dt = Math.min(2.2, (time - prevTime) / 16.67 || 1);
+      prevTime = time;
+      if (visible) frame(dt);
+      requestAnimationFrame(loop);
+    }
+
+    resize();
+    seed();
+    // Mobile browsers fire resize as the address bar hides; only reseed on a real width change
+    window.addEventListener('resize', () => {
+      const prevW = W;
+      resize();
+      if (W !== prevW) seed();
+      if (reducedMotion) frame(0);
+    });
+
+    if (reducedMotion) {
+      frame(0);
+    } else {
+      new IntersectionObserver((entries) => { visible = entries[0].isIntersecting; }).observe(canvas);
+      requestAnimationFrame(loop);
+    }
+  })();
 </script>
 </body>
 </html>

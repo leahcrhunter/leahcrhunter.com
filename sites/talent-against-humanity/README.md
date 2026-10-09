@@ -42,8 +42,19 @@ This isn't a client/server game — it's **peer-to-peer**, using
   and delivers its own messages straight into the UI instead of over the wire. One
   reducer (`applyServerMessage` in `app.js`), no special-cased host UI.
 
-This means: the whole thing is three plain JS files and no build step, and it's
-free to run forever, because there's no server to pay for.
+- **Players on different networks** (one on home wifi, one on mobile data, one
+  behind a work VPN) often can't connect directly. For them the connection goes
+  through Cloudflare's free TURN relay instead. The relay only passes encrypted
+  traffic along; it still doesn't run or store anything about the game. The site's
+  Worker hands out relay login details from `/api/ice` (`src/cards/index.js` at
+  the repo root), only for real rooms: the host's page registers its room code
+  when it creates the room, and players get logins only for a registered code.
+  Rooms and logins last two hours, and each address can create 10 rooms an hour.
+
+This means: the game itself is three plain JS files and no build step, and it's
+free to run, because the only server-side piece is a tiny endpoint on the site's
+existing Worker and the relay's free allowance (1,000 GB a month) is far more
+than a card game uses.
 
 **Trade-off, stated plainly:** because the host's tab *is* the server, if the host
 closes their tab or loses their connection, the game ends for everyone. That's a
@@ -76,6 +87,28 @@ python3 -m http.server 8080
 Open it in two different browser tabs (or two devices on the same network) to test
 hosting and joining.
 
+## Setting up the relay (one-off)
+
+Without this, only players who can connect directly to the host (usually the
+same wifi) can join; everyone else times out after 15 seconds.
+
+1. In the Cloudflare dashboard, go to **Realtime → TURN Server** and create a
+   TURN key. Copy its **Key ID** and **API token** (the token is only shown once).
+2. From the repo root:
+   ```bash
+   npx wrangler secret put TURN_KEY_ID          # paste the Key ID
+   npx wrangler secret put TURN_KEY_API_TOKEN   # paste the API token
+   ```
+3. Check it: open `https://cards.leahcrhunter.com/api/ice?host=TEST` in a
+   browser (this registers a pretend room called TEST for two hours, which is
+   harmless). You should see `turn:` addresses with a username and credential;
+   if you only see a `stun:` address, the secrets aren't set (the Worker's logs
+   say why).
+
+Locally with `npx serve`, there's no `/api/ice`, so the game falls back to
+PeerJS's defaults. To test the relay locally, put both values in the repo's
+`.dev.vars` and run `npx wrangler dev --host cards.leahcrhunter.com`.
+
 ## Deploying
 
 This folder lives inside the [leahcrhunter.com](https://github.com/leahcrhunter/leahcrhunter.com)
@@ -95,6 +128,5 @@ your own.
 - A short "how to play" overlay on first load
 - Reconnect handling if a player's tab refreshes mid-game (currently they'd need
   to rejoin as a new player)
-- A custom, tighter room-code scheme if PeerJS's public broker ever gets flaky
-  under load (fine for a friend group; would need TURN servers or a Cloudflare
-  Durable Objects backend for anything larger)
+- Replace PeerJS's public broker (used to find the host by room code) with a
+  Cloudflare Durable Object if it ever gets flaky

@@ -54,7 +54,10 @@
 
   // Who's watching stream.leahcrhunter.com right now: the "viewer-presence"
   // KV namespace, shared with the old stream Worker.
+  // Talent Against Humanity's open rooms (src/cards/index.js) share it, with
+  // keys under "cards:".
   "kv_namespaces": [
-    { "binding": "VIEWERS", "id": "438f0c5c12a749afa81e98c1c1c2912c" }
+    { "binding": "VIEWERS", "id": "438f0c5c12a749afa81e98c1c1c2912c" },
+    { "binding": "CARDS_ROOMS", "id": "438f0c5c12a749afa81e98c1c1c2912c" }
   ]
 }
