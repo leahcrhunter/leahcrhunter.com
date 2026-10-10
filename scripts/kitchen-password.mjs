@@ -4,6 +4,8 @@
 //
 // Type the shared password when asked (it isn't echoed), then paste the line it
 // prints into `npx wrangler secret put KITCHEN_PASSWORD_HASH`.
+// The same goes for logs.leahcrhunter.com's own password: run it with `logs`
+// and paste the line into `npx wrangler secret put LOGS_PASSWORD_HASH`.
 // Must match checkPassword() in src/kitchen/auth.js.
 
 import { createInterface } from "node:readline";
@@ -13,7 +15,7 @@ const ITERATIONS = 100000; // the most Cloudflare Workers allow for PBKDF2
 // The prompt goes to stderr, so `$(node scripts/kitchen-password.mjs)` captures only the hash.
 const rl = createInterface({ input: process.stdin, output: process.stderr, terminal: true });
 rl._writeToOutput = (s) => { if (s.includes("password")) process.stderr.write(s); };
-rl.question("kitchen password: ", async (password) => {
+rl.question(`${process.argv[2] || "kitchen"} password: `, async (password) => {
   rl.close();
   process.stderr.write("\n");
   if (password.length < 8) {

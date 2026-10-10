@@ -3,6 +3,8 @@
 // src/kitchen/auth.js). The video comes from the origin server behind this
 // hostname, so once signed in, anything that isn't ours is passed through to it.
 // Viewers check in to the VIEWERS KV namespace; the page shows them as fireflies.
+// Each tab is also written to the stream_views table in D1, which
+// logs.leahcrhunter.com reads (src/logs/index.js).
 
 import { hasSession, login, logout } from "../kitchen/auth.js";
 
@@ -44,13 +46,21 @@ async function viewers(request, env, path) {
     const body = await request.json().catch(() => ({}));
     const id = body?.id || crypto.randomUUID();
     await env.VIEWERS.put("viewer:" + id, "1", { expirationTtl: 60 });
+    await logView(request, env, id, body?.device);
     return Response.json({ id });
   }
 
   // A tab closing clears its spot straight away.
   if (path === "/watch/leave" && request.method === "POST") {
     const body = await request.json().catch(() => ({}));
-    if (body?.id) await env.VIEWERS.delete("viewer:" + body.id);
+    if (body?.id) {
+      await env.VIEWERS.delete("viewer:" + body.id);
+      await env.KITCHEN_DB
+        .prepare("UPDATE stream_views SET ended_at = ?1, last_seen = ?1 WHERE id = ?2")
+        .bind(Math.floor(Date.now() / 1000), String(body.id).slice(0, 64))
+        .run()
+        .catch(() => {});
+    }
     return new Response(null, { status: 204 });
   }
 
@@ -63,4 +73,29 @@ async function viewers(request, env, path) {
   }
 
   return new Response("not found", { status: 404 });
+}
+
+// First check-in starts the row; later ones keep it alive. A tab that comes
+// back (e.g. from the back/forward cache) after saying goodbye is reopened.
+// A logging hiccup never stops the viewer count working.
+async function logView(request, env, id, device) {
+  const now = Math.floor(Date.now() / 1000);
+  const cf = request.cf || {};
+  await env.KITCHEN_DB
+    .prepare(
+      `INSERT INTO stream_views (id, device, started_at, last_seen, ip, country, city, user_agent)
+       VALUES (?1, ?2, ?3, ?3, ?4, ?5, ?6, ?7)
+       ON CONFLICT (id) DO UPDATE SET last_seen = excluded.last_seen, ended_at = NULL`
+    )
+    .bind(
+      String(id).slice(0, 64),
+      device ? String(device).slice(0, 64) : null,
+      now,
+      request.headers.get("cf-connecting-ip"),
+      cf.country || null,
+      cf.city || null,
+      (request.headers.get("user-agent") || "").slice(0, 400)
+    )
+    .run()
+    .catch(() => {});
 }

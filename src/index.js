@@ -7,6 +7,7 @@
 import { kitchen } from "./kitchen/index.js";
 import { stream } from "./stream/index.js";
 import { cards } from "./cards/index.js";
+import { logs } from "./logs/index.js";
 
 export default {
   async fetch(request, env) {
@@ -28,6 +29,10 @@ export default {
     // networks can reach each other.
     if (folder === "talent-against-humanity") {
       return cards(request, env, (req) => serveFolder(req, env, folder));
+    }
+    // logs.leahcrhunter.com shows who's watched the stream, behind its own password.
+    if (folder === "logs") {
+      return logs(request, env, (req) => serveFolder(req, env, folder));
     }
     return serveFolder(request, env, folder);
   },

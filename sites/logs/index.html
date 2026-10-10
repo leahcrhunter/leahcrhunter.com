@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stream logs</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dusk-deep: #0b1f1a;
+    --dusk-indigo: #111b2e;
+    --moss: #4e7a5e;
+    --moss-soft: #8fb39a;
+    --firefly: #f5c24c;
+    --firefly-soft: #ffd37a;
+    --paper: #f2efe4;
+    --line: rgba(242, 239, 228, 0.1);
+    --card: rgba(242, 239, 228, 0.04);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, var(--dusk-indigo) 0%, var(--dusk-deep) 60%, #060f0c 100%) fixed;
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+  }
+
+  main {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 40px 16px 64px;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(26px, 4vw, 34px);
+    margin: 0;
+  }
+
+  header a {
+    color: var(--moss-soft);
+    font-size: 14px;
+    text-decoration: none;
+  }
+  header a:hover { color: var(--firefly-soft); }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .stat b {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 28px;
+    color: var(--firefly);
+  }
+  .stat span { font-size: 13px; color: var(--moss-soft); }
+
+  .device {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
+  .device summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 16px;
+  }
+  .device summary::-webkit-details-marker { display: none; }
+  .device summary:hover { background: rgba(242, 239, 228, 0.03); }
+
+  .device .name {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .device .meta, .device .when {
+    font-size: 13px;
+    color: var(--moss-soft);
+  }
+  .device .when { text-align: right; }
+  .device .count { text-align: right; font-size: 13px; color: var(--paper); opacity: 0.8; }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--firefly);
+    box-shadow: 0 0 8px var(--firefly);
+    flex: none;
+  }
+
+  .table-wrap { overflow-x: auto; border-top: 1px solid var(--line); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 18px;
+    white-space: nowrap;
+  }
+  th {
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--moss-soft);
+  }
+  tbody tr + tr td { border-top: 1px solid var(--line); }
+
+  .live { color: var(--firefly); }
+  .guess { color: var(--moss-soft); }
+
+  .ua {
+    padding: 10px 18px 14px;
+    font-size: 12px;
+    color: var(--moss-soft);
+    word-break: break-word;
+    border-top: 1px solid var(--line);
+  }
+
+  .empty, .error {
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--moss-soft);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+  }
+
+  .note {
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--moss-soft);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 560px) {
+    .device summary { grid-template-columns: 1fr; }
+    .device .when, .device .count { text-align: left; }
+    th, td { padding: 9px 12px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>who's been watching</h1>
+    <a href="/logout">sign out</a>
+  </header>
+
+  <section class="stats" id="stats"></section>
+  <section id="devices"><p class="empty">loading…</p></section>
+
+  <p class="note">
+    One card per computer (browser), newest first; open one to see each time it watched.
+    "Ended" is when the tab closed. If the browser couldn't say goodbye (a phone
+    going to sleep, a crash), it's the last check-in instead, marked with ~.
+    Kept for 90 days. Refreshes every 30 seconds.
+  </p>
+</main>
+
+<script>
+  const LIVE = 60; // seconds: a tab checks in every 20 s, so a minute's silence means it's gone
+
+  const day = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+  const time = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
+  const full = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function computer(ua) {
+    ua = ua || '';
+    const os =
+      /iPhone/.test(ua) ? 'iPhone' :
+      /iPad/.test(ua) ? 'iPad' :
+      /Android/.test(ua) ? 'Android' :
+      /Windows/.test(ua) ? 'Windows' :
+      /CrOS/.test(ua) ? 'Chromebook' :
+      /Mac OS X|Macintosh/.test(ua) ? 'Mac' :
+      /Linux/.test(ua) ? 'Linux' : 'unknown device';
+    const browser =
+      /Edg\//.test(ua) ? 'Edge' :
+      /OPR\//.test(ua) ? 'Opera' :
+      /SamsungBrowser/.test(ua) ? 'Samsung Internet' :
+      /Firefox|FxiOS/.test(ua) ? 'Firefox' :
+      /Chrome|CriOS/.test(ua) ? 'Chrome' :
+      /Safari/.test(ua) ? 'Safari' : 'a browser';
+    return `${browser} on ${os}`;
+  }
+
+  function duration(secs) {
+    secs = Math.max(0, Math.round(secs));
+    if (secs < 60) return `${secs}s`;
+    const m = Math.floor(secs / 60), h = Math.floor(m / 60);
+    return h ? `${h}h ${m % 60}m` : `${m}m`;
+  }
+
+  // When a tab stopped watching, and how sure we are about it.
+  function ending(v, now) {
+    if (v.ended_at) return { at: v.ended_at, state: 'closed' };
+    if (now - v.last_seen < LIVE) return { at: now, state: 'live' };
+    return { at: v.last_seen, state: 'guess' };
+  }
+
+  function render({ now, views }) {
+    const devices = new Map();
+    for (const v of views) {
+      // Tabs from before device ids existed are grouped by address + browser.
+      const key = v.device || `${v.ip}|${v.user_agent}`;
+      if (!devices.has(key)) devices.set(key, []);
+      devices.get(key).push({ ...v, end: ending(v, now) });
+    }
+
+    const list = [...devices.values()]; // views come newest first, so devices do too
+    const liveNow = views.filter((v) => ending(v, now).state === 'live').length;
+    const week = views.filter((v) => now - v.started_at < 7 * 86400);
+    const watched = week.reduce((t, v) => t + (ending(v, now).at - v.started_at), 0);
+
+    document.getElementById('stats').innerHTML = [
+      [liveNow, 'watching now'],
+      [list.length, 'computers (90 days)'],
+      [week.length, 'views this week'],
+      [duration(watched), 'watched this week'],
+    ].map(([n, label]) => `<div class="stat"><b>${esc(n)}</b><span>${label}</span></div>`).join('');
+
+    const root = document.getElementById('devices');
+    if (!list.length) {
+      root.innerHTML = '<p class="empty">nobody yet</p>';
+      return;
+    }
+
+    const open = new Set([...root.querySelectorAll('details[open]')].map((d) => d.dataset.key));
+    root.innerHTML = list.map((tabs) => {
+      const first = tabs[0];
+      const key = first.device || `${first.ip}|${first.user_agent}`;
+      const live = tabs.some((t) => t.end.state === 'live');
+      const place = [first.city, first.country].filter(Boolean).join(', ') || 'somewhere';
+      const total = tabs.reduce((t, v) => t + (v.end.at - v.started_at), 0);
+      const rows = tabs.map((v) => {
+        const end =
+          v.end.state === 'live' ? '<span class="live">still watching</span>' :
+          v.end.state === 'guess' ? `<span class="guess" title="last check-in; the tab didn't say goodbye">~${time.format(v.end.at * 1000)}</span>` :
+          time.format(v.end.at * 1000);
+        return `<tr>
+          <td>${day.format(v.started_at * 1000)}</td>
+          <td>${time.format(v.started_at * 1000)}</td>
+          <td>${end}</td>
+          <td>${duration(v.end.at - v.started_at)}</td>
+          <td>${esc(v.ip || '')}</td>
+        </tr>`;
+      }).join('');
+      return `<details class="device" data-key="${esc(key)}"${open.has(key) ? ' open' : ''}>
+        <summary>
+          <span class="name">${live ? '<span class="dot" title="watching now"></span>' : ''}${esc(computer(first.user_agent))}</span>
+          <span class="when">${live ? '<span class="live">watching now</span>' : 'last seen ' + full.format(first.end.at * 1000)}</span>
+          <span class="meta">${esc(place)} · ${esc(first.ip || 'no address')}</span>
+          <span class="count">${tabs.length} ${tabs.length === 1 ? 'view' : 'views'} · ${duration(total)}</span>
+        </summary>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Day</th><th>Started</th><th>Ended</th><th>Length</th><th>Address</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <div class="ua">${esc(first.user_agent || '')}</div>
+      </details>`;
+    }).join('');
+  }
+
+  async function load() {
+    try {
+      const res = await fetch('/api/views');
+      if (res.status === 401) return location.assign('/login');
+      render(await res.json());
+    } catch (e) {
+      if (!document.querySelector('.device')) {
+        document.getElementById('devices').innerHTML = '<p class="error">couldn\'t load the logs. try refreshing?</p>';
+      }
+    }
+  }
+
+  load();
+  setInterval(load, 30000);
+</script>
+</body>
+</html>

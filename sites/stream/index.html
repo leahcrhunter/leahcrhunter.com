@@ -309,6 +309,15 @@
     sessionId = crypto.randomUUID();
     sessionStorage.setItem('fireflySessionId', sessionId);
   }
+  // Same for every tab in this browser, so the logs can tell computers apart.
+  let deviceId = null;
+  try {
+    deviceId = localStorage.getItem('fireflyDeviceId');
+    if (!deviceId) {
+      deviceId = crypto.randomUUID();
+      localStorage.setItem('fireflyDeviceId', deviceId);
+    }
+  } catch (e) {}
   const jarFireflies = document.querySelectorAll('.jar-firefly-group');
 
   function updateJar(count) {
@@ -323,7 +332,7 @@
       await fetch('/watch/heartbeat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ id: sessionId }),
+        body: JSON.stringify({ id: sessionId, device: deviceId }),
       });
     } catch (e) {}
   }

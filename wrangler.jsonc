@@ -23,7 +23,8 @@
       "ocean.leahcrhunter.com": "ocean",
       "calc.leahcrhunter.com":  "calc",
       "kitchen.leahcrhunter.com": "kitchen",
-      "stream.leahcrhunter.com":  "stream"
+      "stream.leahcrhunter.com":  "stream",
+      "logs.leahcrhunter.com":    "logs"
     }
   },
 
@@ -35,6 +36,7 @@
     { "pattern": "ocean.leahcrhunter.com", "custom_domain": true },
     { "pattern": "calc.leahcrhunter.com",  "custom_domain": true },
     { "pattern": "kitchen.leahcrhunter.com", "custom_domain": true },
+    { "pattern": "logs.leahcrhunter.com",    "custom_domain": true },
     // Not a custom domain: stream's DNS record points at the video server, and
     // the Worker passes signed-in requests through to it (src/stream/index.js).
     { "pattern": "stream.leahcrhunter.com/*", "zone_name": "leahcrhunter.com" }

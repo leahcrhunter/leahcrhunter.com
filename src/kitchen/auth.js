@@ -1,7 +1,8 @@
 // One shared password, checked against a PBKDF2 hash in the
 // KITCHEN_PASSWORD_HASH secret (make one with scripts/kitchen-password.mjs).
 // A correct password gets a long-lived signed cookie, so each device logs in once.
-// stream.leahcrhunter.com uses the same password with its own cookie name.
+// stream.leahcrhunter.com uses the same password with its own cookie name;
+// logs.leahcrhunter.com has its own cookie and its own password (LOGS_PASSWORD_HASH).
 // Failed attempts are counted in D1: 5 per IP per 15 minutes, 50 overall per hour.
 
 const COOKIE = "kitchen_session";
@@ -11,18 +12,20 @@ const OVERALL = { limit: 50, window: 60 * 60 };
 
 const enc = new TextEncoder();
 
-export async function hasSession(request, env, cookie = COOKIE) {
-  if (!env.KITCHEN_SESSION_SECRET || !env.KITCHEN_PASSWORD_HASH) return false;
+export async function hasSession(request, env, cookie = COOKIE, hashVar = "KITCHEN_PASSWORD_HASH") {
+  const hash = env[hashVar];
+  if (!env.KITCHEN_SESSION_SECRET || !hash) return false;
   const token = readCookie(request, cookie);
   if (!token) return false;
   const [issued, sig] = token.split(".");
   if (!/^\d+$/.test(issued) || !sig) return false;
   if (Date.now() / 1000 - Number(issued) > MAX_AGE) return false;
-  return safeEqual(sig, await sign(env, issued));
+  return safeEqual(sig, await sign(env, issued, hash));
 }
 
-export async function login(request, env, cookie = COOKIE) {
-  if (!env.KITCHEN_SESSION_SECRET || !env.KITCHEN_PASSWORD_HASH) return back("setup");
+export async function login(request, env, cookie = COOKIE, hashVar = "KITCHEN_PASSWORD_HASH") {
+  const hash = env[hashVar];
+  if (!env.KITCHEN_SESSION_SECRET || !hash) return back("setup");
 
   const db = env.KITCHEN_DB;
   const ip = request.headers.get("cf-connecting-ip") || "unknown";
@@ -39,7 +42,7 @@ export async function login(request, env, cookie = COOKIE) {
   const form = await request.formData().catch(() => null);
   const password = String(form?.get("password") ?? "");
 
-  if (!(await checkPassword(password, env.KITCHEN_PASSWORD_HASH))) {
+  if (!(await checkPassword(password, hash))) {
     await db.prepare("INSERT INTO login_attempts (ip, at) VALUES (?, ?)").bind(ip, now).run();
     return back("wrong");
   }
@@ -47,7 +50,7 @@ export async function login(request, env, cookie = COOKIE) {
   await db.prepare("DELETE FROM login_attempts WHERE ip = ? OR at < ?").bind(ip, now - 86400).run();
   const issued = String(now);
   const setCookie =
-    `${cookie}=${issued}.${await sign(env, issued)}; Max-Age=${MAX_AGE}; ` +
+    `${cookie}=${issued}.${await sign(env, issued, hash)}; Max-Age=${MAX_AGE}; ` +
     `Path=/; HttpOnly; Secure; SameSite=Lax`;
   return new Response(null, { status: 303, headers: { location: "/", "set-cookie": setCookie } });
 }
@@ -64,12 +67,12 @@ function back(reason) {
 }
 
 // The password hash is part of what's signed, so changing the password
-// signs every device out.
-async function sign(env, issued) {
+// signs every device out (and a cookie for one password is no good for another).
+async function sign(env, issued, hash) {
   const key = await crypto.subtle.importKey(
     "raw", enc.encode(env.KITCHEN_SESSION_SECRET), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
   );
-  const mac = await crypto.subtle.sign("HMAC", key, enc.encode(`${issued}.${env.KITCHEN_PASSWORD_HASH}`));
+  const mac = await crypto.subtle.sign("HMAC", key, enc.encode(`${issued}.${hash}`));
   return b64url(mac);
 }
 
