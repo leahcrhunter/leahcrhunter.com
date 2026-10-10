@@ -14,7 +14,7 @@ them, picking the folder by hostname.
 | `sites/calc/`                     | https://calc.leahcrhunter.com    | Pokémon Champions (VGC) damage calculator — see its [README](sites/calc/README.md) |
 | `sites/kitchen/`                  | https://kitchen.leahcrhunter.com | Private project, password protected |
 | `sites/stream/`                   | https://stream.leahcrhunter.com  | Private project, password protected |
-| `sites/logs/`                     | https://logs.leahcrhunter.com    | Who's watched the stream; private, its own password |
+| `sites/logs/`                     | https://logs.leahcrhunter.com    | Private project, password protected |
 
 All plain HTML/CSS/JS — no build step, no dependencies.
 
