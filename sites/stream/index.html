@@ -136,107 +136,11 @@
     margin-top: 10px;
     font-style: normal;
   }
-
-  /* Firefly jar, tucked quietly in the corner */
-  #jar-wrap {
-    position: fixed;
-    top: 18px;
-    right: 18px;
-    z-index: 3;
-    opacity: 0.85;
-    transition: opacity 0.4s ease;
-  }
-
-  #jar-wrap:hover {
-    opacity: 1;
-  }
-
-  .jar-firefly-group {
-    transform-origin: center;
-    animation: jarFlicker 3.2s ease-in-out infinite;
-  }
-
-  .jar-firefly-group.lit {
-    animation: jarFlickerLit 2.2s ease-in-out infinite;
-  }
-
-  .jar-firefly {
-    transform-origin: center;
-    fill: var(--firefly-soft);
-    filter: drop-shadow(0 0 2px rgba(255, 211, 122, 0.6));
-    transition: fill 0.7s ease, filter 0.7s ease;
-  }
-
-  .jar-firefly-group.lit .jar-firefly {
-    fill: #fffdf6;
-    filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
-  }
-
-  @keyframes jarFlicker {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.8; }
-  }
-
-  @keyframes jarFlickerLit {
-    0%, 100% { opacity: 0.88; }
-    50% { opacity: 1; }
-  }
-
-  @keyframes wander0 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2.5px, -2px); } }
-  @keyframes wander1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2px, 2.5px); } }
-  @keyframes wander2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, 2px); } }
-  @keyframes wander3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2.5px, -1.5px); } }
-  @keyframes wander4 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(1.5px, -2.5px); } }
 </style>
 </head>
 <body>
 
 <div id="fireflies"></div>
-
-<div id="jar-wrap" title="little lights, for whoever's here">
-  <svg width="56" height="66" viewBox="0 0 56 66" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="jarGlass" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="rgba(242,239,228,0.11)"/>
-        <stop offset="100%" stop-color="rgba(242,239,228,0.03)"/>
-      </linearGradient>
-      <clipPath id="jarClip">
-        <rect x="10" y="12" width="36" height="42" rx="8"/>
-      </clipPath>
-    </defs>
-
-    <!-- lid -->
-    <rect x="17" y="4" width="22" height="10" rx="4" fill="#c9a97e"/>
-    <rect x="17" y="4" width="22" height="4" rx="2" fill="#dab98c"/>
-
-    <!-- jar body: rounded square -->
-    <rect x="10" y="12" width="36" height="42" rx="8"
-          fill="url(#jarGlass)" stroke="rgba(245,194,76,0.35)" stroke-width="1.5"/>
-
-    <!-- glassy highlight -->
-    <path d="M18 18 q-1 20 2 34" stroke="rgba(255,255,255,0.12)" stroke-width="3"
-          fill="none" stroke-linecap="round" clip-path="url(#jarClip)"/>
-
-    <!-- fireflies, wandering inside the jar -->
-    <g clip-path="url(#jarClip)">
-      <g class="jar-firefly-group" data-idx="0">
-        <circle class="jar-firefly" style="animation: wander0 7s ease-in-out infinite" cx="20" cy="26" r="2.6"/>
-      </g>
-      <g class="jar-firefly-group" data-idx="1">
-        <circle class="jar-firefly" style="animation: wander1 8s ease-in-out infinite" cx="36" cy="24" r="2.6"/>
-      </g>
-      <g class="jar-firefly-group" data-idx="2">
-        <circle class="jar-firefly" style="animation: wander2 6.5s ease-in-out infinite" cx="28" cy="37" r="2.6"/>
-      </g>
-      <g class="jar-firefly-group" data-idx="3">
-        <circle class="jar-firefly" style="animation: wander3 9s ease-in-out infinite" cx="38" cy="44" r="2.6"/>
-      </g>
-      <g class="jar-firefly-group" data-idx="4">
-        <circle class="jar-firefly" style="animation: wander4 7.5s ease-in-out infinite" cx="17" cy="47" r="2.6"/>
-      </g>
-    </g>
-  </svg>
-</div>
 
 <main>
   <h1>come sit with me a while</h1>
@@ -303,7 +207,9 @@
     showOffline();
   }
 
-  // --- Firefly jar: live viewer presence ---
+  // --- Check-ins, for logs.leahcrhunter.com ---
+  // (The "firefly" storage keys are from the old viewer jar; kept so browsers
+  // that already have a device id keep it.)
   let sessionId = sessionStorage.getItem('fireflySessionId');
   if (!sessionId) {
     sessionId = crypto.randomUUID();
@@ -318,31 +224,15 @@
       localStorage.setItem('fireflyDeviceId', deviceId);
     }
   } catch (e) {}
-  const jarFireflies = document.querySelectorAll('.jar-firefly-group');
-
-  function updateJar(count) {
-    const lit = Math.max(0, Math.min(5, count));
-    jarFireflies.forEach((el, idx) => {
-      el.classList.toggle('lit', idx < lit);
-    });
-  }
 
   async function heartbeat() {
     try {
-      await fetch('/watch/heartbeat', {
+      const res = await fetch('/watch/heartbeat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ id: sessionId, device: deviceId }),
       });
-    } catch (e) {}
-  }
-
-  async function pollCount() {
-    try {
-      const res = await fetch('/watch/count');
-      if (res.status === 401) return location.assign('/login'); // signed out in another tab
-      const data = await res.json();
-      updateJar(data.count);
+      if (res.status === 401) location.assign('/login'); // signed out in another tab
     } catch (e) {}
   }
 
@@ -355,9 +245,7 @@
   window.addEventListener('beforeunload', leave);
 
   heartbeat();
-  pollCount();
   setInterval(heartbeat, 20000);
-  setInterval(pollCount, 5000);
 </script>
 
 </body>

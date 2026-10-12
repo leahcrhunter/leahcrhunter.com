@@ -2,8 +2,7 @@
 // video itself all sit behind the kitchen's shared password (see
 // src/kitchen/auth.js). The video comes from the origin server behind this
 // hostname, so once signed in, anything that isn't ours is passed through to it.
-// Viewers check in to the VIEWERS KV namespace; the page shows them as fireflies.
-// Each tab is also written to the stream_views table in D1, which
+// Each viewer's tab checks in to the stream_views table in D1, which
 // logs.leahcrhunter.com reads (src/logs/index.js).
 
 import { hasSession, login, logout } from "../kitchen/auth.js";
@@ -41,20 +40,18 @@ export async function stream(request, env, serveStatic) {
 }
 
 async function viewers(request, env, path) {
-  // A viewer's tab checks in every 20 s; a check-in lasts a minute.
+  // A viewer's tab checks in every 20 s.
   if (path === "/watch/heartbeat" && request.method === "POST") {
     const body = await request.json().catch(() => ({}));
     const id = body?.id || crypto.randomUUID();
-    await env.VIEWERS.put("viewer:" + id, "1", { expirationTtl: 60 });
     await logView(request, env, id, body?.device);
     return Response.json({ id });
   }
 
-  // A tab closing clears its spot straight away.
+  // A tab closing marks its row as ended straight away.
   if (path === "/watch/leave" && request.method === "POST") {
     const body = await request.json().catch(() => ({}));
     if (body?.id) {
-      await env.VIEWERS.delete("viewer:" + body.id);
       await env.KITCHEN_DB
         .prepare("UPDATE stream_views SET ended_at = ?1, last_seen = ?1 WHERE id = ?2")
         .bind(Math.floor(Date.now() / 1000), String(body.id).slice(0, 64))
@@ -64,20 +61,12 @@ async function viewers(request, env, path) {
     return new Response(null, { status: 204 });
   }
 
-  // How many check-ins are still alive.
-  if (path === "/watch/count") {
-    const list = await env.VIEWERS.list({ prefix: "viewer:" });
-    const now = Date.now() / 1000;
-    const count = list.keys.filter((k) => !k.expiration || k.expiration > now).length;
-    return Response.json({ count });
-  }
-
   return new Response("not found", { status: 404 });
 }
 
 // First check-in starts the row; later ones keep it alive. A tab that comes
 // back (e.g. from the back/forward cache) after saying goodbye is reopened.
-// A logging hiccup never stops the viewer count working.
+// A logging hiccup never breaks the page.
 async function logView(request, env, id, device) {
   const now = Math.floor(Date.now() / 1000);
   const cf = request.cf || {};
