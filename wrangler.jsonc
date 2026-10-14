@@ -52,12 +52,5 @@
       "database_id": "7577edec-4eaa-4aed-823b-5df75a879044",
       "migrations_dir": "migrations/kitchen"
     }
-  ],
-
-  // Talent Against Humanity's open rooms (src/cards/index.js), keys under
-  // "cards:". Lives in the "viewer-presence" KV namespace, named for the old
-  // stream viewer jar that used to share it.
-  "kv_namespaces": [
-    { "binding": "CARDS_ROOMS", "id": "438f0c5c12a749afa81e98c1c1c2912c" }
   ]
 }

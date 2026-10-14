@@ -14,7 +14,6 @@ const TARGET_SCORE = 5;
 const HAND_SIZE = 7;
 const CODE_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ"; // no O/I to avoid 0/1 confusion
 const PEER_PREFIX = "tah-room-";
-const JOIN_TIMEOUT_MS = 15000;
 
 /* ----------------------------- shared state ----------------------------- */
 
@@ -70,23 +69,6 @@ function randomToken() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-// Relay servers for players who can't connect directly (different networks).
-// The site's Worker hands these out for real rooms only: the host registers
-// its code ("host"), players ask for a registered one ("join"). When it can't
-// (e.g. a plain local file server), PeerJS's own defaults are used instead.
-async function peerOptions(role, code) {
-  try {
-    const res = await fetch(`/api/ice?${role}=${encodeURIComponent(code)}`);
-    if (res.ok) {
-      const { iceServers } = await res.json();
-      return { debug: 1, config: { iceServers } };
-    }
-  } catch (e) {
-    console.warn("no relay servers, connecting directly only", e);
-  }
-  return { debug: 1 };
-}
-
 function playerListPublic() {
   return host.order.map((id) => {
     const p = host.players.get(id);
@@ -119,7 +101,7 @@ function broadcast(msg) {
 
 /* ------------------------------ host logic -------------------------------- */
 
-async function hostCreateRoom(name, onReady, onError) {
+function hostCreateRoom(name, onReady, onError) {
   host.active = false;
   host.connections = new Map();
   host.players = new Map();
@@ -135,7 +117,7 @@ async function hostCreateRoom(name, onReady, onError) {
   host.phase = "lobby";
 
   const code = randomCode();
-  const peer = new Peer(PEER_PREFIX + code, await peerOptions("host", code));
+  const peer = new Peer(PEER_PREFIX + code, { debug: 1 });
   state.peer = peer;
   state.role = "host";
   state.myName = name;
@@ -400,42 +382,27 @@ function hostRestartGame() {
 
 /* ------------------------------ client logic ------------------------------ */
 
-async function clientJoinRoom(code, name, onError) {
-  const peer = new Peer(await peerOptions("join", code));
+function clientJoinRoom(code, name, onError) {
+  const peer = new Peer({ debug: 1 });
   state.peer = peer;
   state.role = "player";
   state.myName = name;
   state.roomCode = code;
 
-  // If the link to the host never opens (a network that blocks peer-to-peer
-  // and no working relay), nothing fires — so give up after a while instead
-  // of hanging on "Joining…" forever.
-  const joinTimer = setTimeout(() => {
-    peer.destroy();
-    onError({ type: "join-timeout" });
-  }, JOIN_TIMEOUT_MS);
-
   peer.on("open", () => {
     const conn = peer.connect(PEER_PREFIX + code, { reliable: true });
     state.hostConn = conn;
     conn.on("open", () => {
-      clearTimeout(joinTimer);
       conn.send({ type: "join", name });
     });
     conn.on("data", (data) => applyServerMessage(data));
     conn.on("close", () => {
       showError("Lost connection to the host. They may have closed the room.");
     });
-    conn.on("error", (err) => {
-      clearTimeout(joinTimer);
-      onError(err);
-    });
+    conn.on("error", (err) => onError(err));
   });
 
-  peer.on("error", (err) => {
-    clearTimeout(joinTimer);
-    onError(err);
-  });
+  peer.on("error", (err) => onError(err));
 }
 
 function sendToHost(msg) {

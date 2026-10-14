@@ -265,11 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clientJoinRoom(code, name, (err) => {
       btn.disabled = false;
       btn.textContent = "Join room";
-      showError(
-        err && err.type === "join-timeout"
-          ? "Couldn't reach the host's device — try joining from the same wifi as them."
-          : "Couldn't find that room. Double check the code with the host."
-      );
+      showError("Couldn't find that room. Double check the code with the host.");
       console.error(err);
     });
   });

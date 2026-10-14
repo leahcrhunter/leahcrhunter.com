@@ -6,7 +6,6 @@
 
 import { kitchen } from "./kitchen/index.js";
 import { stream } from "./stream/index.js";
-import { cards } from "./cards/index.js";
 import { logs } from "./logs/index.js";
 
 export default {
@@ -24,11 +23,6 @@ export default {
     // video through from its origin server.
     if (folder === "stream") {
       return stream(request, env, (req) => serveFolder(req, env, folder));
-    }
-    // cards.leahcrhunter.com hands out relay logins so players on different
-    // networks can reach each other.
-    if (folder === "talent-against-humanity") {
-      return cards(request, env, (req) => serveFolder(req, env, folder));
     }
     // logs.leahcrhunter.com shows who's watched the stream, behind its own password.
     if (folder === "logs") {
