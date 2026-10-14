@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Pokémon Are You? — Leah C. R. Hunter</title>
+<meta name="description" content="A branching personality quiz: answer ten or eleven this-or-that questions and find out which of 1,231 Pokémon you are.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* dusk sky gradient stops, same family as the landing page */
+    --sky-1:#0d1026;
+    --sky-2:#1c1834;
+    --sky-3:#2c2340;
+    --sky-4:#241a2a;
+
+    --cream:rgba(244,238,224,0.92);
+    --cream-soft:rgba(244,238,224,0.62);
+    --cream-faint:rgba(244,238,224,0.14);
+
+    --gold:#f4d58d;
+    --gold-glint:#fff4d6;
+    --gold-dim:rgba(244,213,141,0.16);
+    --gold-dim-2:rgba(244,213,141,0.32);
+
+    --panel:rgba(244,238,224,0.05);
+    --panel-strong:rgba(244,238,224,0.09);
+    --line:rgba(244,238,224,0.16);
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    color:var(--cream);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, var(--sky-3) 0%, transparent 70%),
+      linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 38%, var(--sky-3) 72%, var(--sky-4) 100%);
+    background-attachment:fixed;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  #firefly-bg{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:720px;
+    padding:56px 24px 80px;
+    flex:1;
+    position:relative;
+    z-index:1;
+  }
+
+  h1,h2,h3{
+    font-family:'Newsreader', serif;
+    font-weight:500;
+    margin:0;
+    color:var(--cream);
+  }
+
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    font-size:11px;
+    font-weight:600;
+    color:var(--gold);
+    margin:0 0 14px;
+  }
+
+  a{ color:var(--gold); }
+
+  /* ---------- top nav ---------- */
+  .topnav{
+    width:100%;
+    max-width:720px;
+    padding:24px 24px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-size:13px;
+    color:var(--cream-soft);
+    position:relative;
+    z-index:1;
+  }
+  .topnav .name{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:15px;
+    color:var(--cream);
+  }
+  .topnav a{ text-decoration:none; }
+  .topnav a:hover{ text-decoration:underline; }
+
+  /* ---------- screens ---------- */
+  .screen{ display:none; }
+  .screen.active{ display:block; animation:fadein 0.35s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- intro ---------- */
+  .intro h1{ font-size:clamp(32px, 5vw, 44px); line-height:1.15; margin-bottom:18px; }
+  .lede{
+    font-size:17px;
+    line-height:1.65;
+    color:var(--cream-soft);
+    max-width:560px;
+    margin:0 0 20px;
+  }
+  .parade{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:4px 10px;
+    margin:28px 0 8px;
+    min-height:80px;
+  }
+  .parade img{
+    width:80px; height:80px;
+    image-rendering:pixelated;
+    filter:drop-shadow(0 0 6px rgba(244,213,141,0.25));
+    animation:bob 2.6s ease-in-out infinite;
+  }
+  .parade img:nth-child(2n){ animation-delay:-1.3s; }
+  .parade img:nth-child(3n){ animation-delay:-0.6s; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-4px);} }
+
+  .facts{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px;
+    margin:28px 0 34px;
+  }
+  .fact{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 14px;
+    background:var(--panel);
+  }
+  .fact .num{
+    font-family:'Newsreader', serif;
+    font-size:22px;
+    color:var(--gold);
+    display:block;
+  }
+  .fact .label{ font-size:12px; color:var(--cream-soft); margin-top:2px; }
+
+  .btn{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    background:var(--gold);
+    color:var(--sky-1);
+    border:none;
+    padding:14px 26px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background 0.15s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow:0 0 18px rgba(244,213,141,0.28);
+  }
+  .btn:hover{ background:var(--gold-glint); box-shadow:0 0 24px rgba(244,213,141,0.45); }
+  .btn:active{ transform:scale(0.98); }
+  .btn.ghost{
+    background:transparent;
+    color:var(--gold);
+    border:1px solid var(--gold-dim-2);
+    box-shadow:none;
+  }
+  .btn.ghost:hover{ background:var(--gold-dim); }
+  .btn:focus-visible, .choice:focus-visible, .link-btn:focus-visible{
+    outline:2px solid var(--gold); outline-offset:3px;
+  }
+
+  /* ---------- quiz ---------- */
+  .progress-track{
+    height:4px;
+    width:100%;
+    background:var(--cream-faint);
+    border-radius:2px;
+    margin-bottom:40px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--gold);
+    width:0%;
+    transition:width 0.35s ease;
+    box-shadow:0 0 8px rgba(244,213,141,0.6);
+  }
+  .q-index{
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--cream-soft);
+    margin:0 0 16px;
+  }
+  .q-text{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:clamp(24px, 3.8vw, 32px);
+    line-height:1.35;
+    margin:0 0 36px;
+    min-height:90px;
+    color:var(--cream);
+  }
+  .choices{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-bottom:32px;
+  }
+  .choice{
+    font:inherit;
+    font-size:16px;
+    line-height:1.4;
+    color:var(--cream);
+    text-align:left;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:20px 18px;
+    cursor:pointer;
+    display:flex;
+    gap:14px;
+    align-items:center;
+    transition:border-color 0.15s ease, background 0.15s ease, box-shadow 0.2s ease;
+  }
+  .choice:hover{
+    border-color:var(--gold-dim-2);
+    background:var(--panel-strong);
+    box-shadow:0 0 18px rgba(244,213,141,0.12);
+  }
+  .choice .key{
+    flex:none;
+    width:30px; height:30px;
+    border-radius:50%;
+    border:1.5px solid var(--gold-dim-2);
+    color:var(--gold);
+    font-size:13px;
+    font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    transition:all 0.15s ease;
+  }
+  .choice:hover .key{ border-color:var(--gold); }
+  .choice.picked{ border-color:var(--gold); }
+  .choice.picked .key{
+    background:var(--gold); color:var(--sky-1); border-color:var(--gold);
+    box-shadow:0 0 14px 4px rgba(244,213,141,0.45);
+  }
+  .quiz-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    color:var(--cream-soft);
+  }
+  .link-btn{
+    font:inherit;
+    background:none;
+    border:none;
+    color:var(--cream-soft);
+    cursor:pointer;
+    padding:6px 0;
+  }
+  .link-btn:hover{ color:var(--gold); }
+  .link-btn[disabled]{ visibility:hidden; }
+
+  /* ---------- result ---------- */
+  .result-card{
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:var(--panel);
+    padding:36px 28px 30px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .result-card::before{
+    content:"";
+    position:absolute;
+    left:50%; top:118px;
+    width:260px; height:260px;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(244,213,141,0.22) 0%, rgba(244,213,141,0) 65%);
+    pointer-events:none;
+  }
+  .sprite{
+    position:relative;
+    width:192px; height:192px;
+    max-width:100%;
+    object-fit:contain;
+    image-rendering:pixelated;
+    display:block;
+    margin:-16px auto 0;
+    animation:bob 3s ease-in-out infinite;
+  }
+  .sprite.art{
+    image-rendering:auto;
+    margin:0 auto 12px;
+    filter:drop-shadow(0 4px 14px rgba(0,0,0,0.35));
+  }
+  .sprite-missing{
+    position:relative;
+    width:120px; height:120px;
+    margin:20px auto 34px;
+    display:block;
+    opacity:0.8;
+  }
+  .dex{
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--cream-soft);
+    margin:0 0 8px;
+  }
+  .result-card h2{ font-size:clamp(32px, 6vw, 46px); line-height:1.1; margin-bottom:14px; }
+  .chips{ display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+  .chip{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:5px 12px;
+    border-radius:999px;
+    color:#14121e;
+  }
+  .chip.form{
+    background:transparent;
+    color:var(--gold);
+    border:1px solid var(--gold-dim-2);
+  }
+  .vibe{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:19px;
+    line-height:1.55;
+    color:var(--cream);
+    max-width:520px;
+    margin:0 auto;
+  }
+  .blurb{
+    font-size:15.5px;
+    line-height:1.7;
+    color:var(--cream-soft);
+    max-width:520px;
+    margin:0 auto;
+  }
+  .blurb::before{
+    content:"";
+    display:block;
+    width:36px;
+    height:1px;
+    margin:20px auto;
+    background:var(--gold-dim-2);
+  }
+  .sprite-note{
+    font-size:12px;
+    color:var(--cream-soft);
+    margin:18px 0 0;
+  }
+
+  .path{
+    margin-top:36px;
+  }
+  .path h3{ font-size:20px; margin-bottom:14px; }
+  .path ol{
+    margin:0;
+    padding:0;
+    list-style:none;
+    counter-reset:step;
+  }
+  .path li{
+    counter-increment:step;
+    display:grid;
+    grid-template-columns:28px 1fr;
+    gap:4px 12px;
+    padding:12px 0;
+    border-bottom:1px solid var(--cream-faint);
+    font-size:14.5px;
+    line-height:1.5;
+  }
+  .path li::before{
+    content:counter(step);
+    grid-row:span 2;
+    font-family:'Newsreader', serif;
+    color:var(--gold);
+    font-size:17px;
+  }
+  .path .pq{ color:var(--cream-soft); }
+  .path .pa{ color:var(--cream); }
+
+  .results-actions{
+    display:flex;
+    gap:12px;
+    margin-top:36px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .copied{ font-size:13px; color:var(--gold); opacity:0; transition:opacity 0.2s ease; }
+  .copied.show{ opacity:1; }
+
+  footer.disc{
+    font-size:12.5px;
+    color:var(--cream-soft);
+    text-align:center;
+    max-width:520px;
+    margin:56px auto 0;
+    line-height:1.6;
+    opacity:0.85;
+  }
+
+  @media (max-width:520px){
+    .choices{ grid-template-columns:1fr; }
+    .q-text{ min-height:auto; }
+    .fact{ padding:12px 8px; }
+    .result-card{ padding:28px 18px 24px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .screen.active, .sprite, .parade img{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="firefly-bg"></canvas>
+
+<div class="topnav">
+  <span class="name">leah c. r. hunter</span>
+  <a href="https://leahcrhunter.com">← back home</a>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="screen intro active" id="screen-intro">
+    <p class="eyebrow">A branching personality quiz</p>
+    <h1>Which Pokémon Are You?</h1>
+    <p class="lede">
+      Every answer sends you down a different branch of a very large tree. Pick
+      whichever of the two options feels more like you — first instinct is best —
+      and after ten or eleven questions you'll land on the one Pokémon at the end
+      of your path.
+    </p>
+    <p class="lede">
+      There are 1,231 possible results: every Pokémon from Bulbasaur to Pecharunt,
+      plus their regional variants, Mega Evolutions, Gigantamax and other forms.
+    </p>
+
+    <div class="parade" id="parade" aria-hidden="true"></div>
+
+    <div class="facts">
+      <div class="fact"><span class="num">10–11</span><span class="label">questions each</span></div>
+      <div class="fact"><span class="num">1,230</span><span class="label">questions in the tree</span></div>
+      <div class="fact"><span class="num">1,231</span><span class="label">possible results</span></div>
+    </div>
+
+    <button class="btn" id="start-btn">Start the quiz</button>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="screen" id="screen-quiz">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <p class="q-index" id="q-index">Question 1</p>
+    <p class="q-text" id="q-text">…</p>
+
+    <div class="choices">
+      <button class="choice" id="choice-a"><span class="key">A</span><span class="label"></span></button>
+      <button class="choice" id="choice-b"><span class="key">B</span><span class="label"></span></button>
+    </div>
+
+    <div class="quiz-nav">
+      <button class="link-btn" id="back-btn">← back</button>
+      <span>press A or B</span>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section class="screen" id="screen-result">
+    <p class="eyebrow" id="result-eyebrow">You are…</p>
+
+    <div class="result-card">
+      <div id="sprite-slot"></div>
+      <p class="dex" id="result-dex"></p>
+      <h2 id="result-name"></h2>
+      <div class="chips" id="result-chips"></div>
+      <p class="vibe" id="result-vibe"></p>
+      <p class="blurb" id="result-blurb" hidden></p>
+      <p class="sprite-note" id="sprite-note" hidden></p>
+    </div>
+
+    <div class="path" id="path-wrap">
+      <h3>How you got here</h3>
+      <ol id="path-list"></ol>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn" id="retake-btn">Take it again</button>
+      <button class="btn ghost" id="share-btn">Copy link to this result</button>
+      <span class="copied" id="copied">Link copied</span>
+    </div>
+
+    <footer class="disc">
+      Just for fun — your answers stay in your browser. Sprites from
+      <a href="https://play.pokemonshowdown.com/sprites/gen5/">Pokémon Showdown</a>
+      (gen 5 style); Mega Evolution artwork via
+      <a href="https://www.serebii.net/pokemon/megaevolution.shtml">Serebii</a>. Pokémon and Pokémon names are © Nintendo / Creatures / GAME FREAK;
+      this quiz is unofficial and not affiliated with them.
+    </footer>
+  </section>
+
+</div>
+
+<script src="quiz-data.js"></script>
+<script src="blurbs.js"></script>
+<script>
+// ================= firefly ambient background =================
+(function(){
+  const canvas = document.getElementById('firefly-bg');
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let w, h, dpr;
+  function resize(){
+    dpr = window.devicePixelRatio || 1;
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const flies = [];
+  for (let i=0; i<20; i++){
+    flies.push({
+      x: Math.random(), y: Math.random(),
+      vx: (Math.random()-0.5) * 0.00028,
+      vy: (Math.random()-0.5) * 0.00028,
+      r: 1.4 + Math.random()*1.6,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.008 + Math.random()*0.014,
+    });
+  }
+
+  let t = 0;
+  function tick(){
+    t += 1;
+    ctx.clearRect(0, 0, w, h);
+    flies.forEach(f=>{
+      if (!reduceMotion){
+        f.x += f.vx; f.y += f.vy;
+        if (f.x < -0.02) f.x = 1.02;
+        if (f.x > 1.02) f.x = -0.02;
+        if (f.y < -0.02) f.y = 1.02;
+        if (f.y > 1.02) f.y = -0.02;
+      }
+      const glow = 0.35 + 0.65 * (0.5 + 0.5*Math.sin(f.phase + t*f.speed));
+      const px = f.x * w, py = f.y * h, r = f.r;
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, r*7);
+      grad.addColorStop(0, `rgba(244,213,141,${0.85*glow})`);
+      grad.addColorStop(0.4, `rgba(244,213,141,${0.28*glow})`);
+      grad.addColorStop(1, 'rgba(244,213,141,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(px, py, r*7, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = `rgba(255,244,214,${0.9*glow})`;
+      ctx.beginPath(); ctx.arc(px, py, r*0.6, 0, Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ================= quiz app =================
+// Q and R come from quiz-data.js (generated from the quiz spreadsheet);
+// BLURBS (result name -> paragraph) comes from blurbs.js (hand-written).
+(function(){
+  const TYPE_COLOURS = {
+    Normal:'#c6c6a7', Fire:'#f5ac78', Water:'#9db7f5', Electric:'#fae078',
+    Grass:'#a7db8d', Ice:'#bce6e6', Fighting:'#d67873', Poison:'#c183c1',
+    Ground:'#ebd69d', Flying:'#c6b7f5', Psychic:'#fa92b2', Bug:'#c6d16e',
+    Rock:'#d1c17d', Ghost:'#a292bc', Dragon:'#a27dfa', Dark:'#a29288',
+    Steel:'#d1d1e0', Fairy:'#f4bdc9',
+  };
+  const FORM_LABELS = {
+    Base:'', Mega:'Mega Evolution', Gigantamax:'Gigantamax', Regional:'Regional form',
+    Alternate:'Alternate form', Primal:'Primal Reversion',
+  };
+  const TYPICAL_LENGTH = 10;
+
+  const $ = id => document.getElementById(id);
+  const screens = ['screen-intro', 'screen-quiz', 'screen-result'].map($);
+  function show(el){
+    screens.forEach(s => s.classList.toggle('active', s === el));
+    window.scrollTo({ top: 0 });
+  }
+
+  // URL-safe id for a result, used for shareable links (#bulbasaur, #mega-charizard-x)
+  function slug(name){
+    return name.replace('♀', '-f').replace('♂', '-m')
+      .normalize('NFKD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase().replace(/[’'.:()]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+  const bySlug = new Map(R.map((r, i) => [slug(r.n), i]));
+
+  // ---------- intro parade ----------
+  (function(){
+    const withSprite = R.filter(r => r.s && r.x && r.f === 'Base');
+    const picks = [];
+    while (picks.length < 6){
+      const r = withSprite[Math.floor(Math.random() * withSprite.length)];
+      if (!picks.includes(r)) picks.push(r);
+    }
+    $('parade').innerHTML = picks.map(r => `<img src="sprites/${r.s}" alt="">`).join('');
+  })();
+
+  // ---------- state ----------
+  // answers: [{ q: question number, pick: 'A' | 'B' }]
+  let current = 1;
+  let answers = [];
+
+  function renderQuestion(){
+    const [text, a, , b] = Q[current - 1];
+    const n = answers.length + 1;
+    $('q-index').textContent = `Question ${n}`;
+    $('q-text').textContent = text;
+    $('choice-a').querySelector('.label').textContent = a;
+    $('choice-b').querySelector('.label').textContent = b;
+    $('choice-a').classList.remove('picked');
+    $('choice-b').classList.remove('picked');
+    $('progress-fill').style.width = Math.min(95, (answers.length / TYPICAL_LENGTH) * 100) + '%';
+    $('back-btn').disabled = answers.length === 0;
+  }
+
+  let busy = false;
+  function choose(pick){
+    if (busy) return;
+    busy = true;
+    $(pick === 'A' ? 'choice-a' : 'choice-b').classList.add('picked');
+    const next = Q[current - 1][pick === 'A' ? 2 : 4];
+    answers.push({ q: current, pick });
+    setTimeout(() => {
+      busy = false;
+      if (next > 0){
+        current = next;
+        renderQuestion();
+      } else {
+        $('progress-fill').style.width = '100%';
+        history.replaceState(null, '', '#' + slug(R[-next - 1].n));
+        showResult(-next - 1, answers);
+      }
+    }, 180);
+  }
+
+  function back(){
+    if (!answers.length) return;
+    current = answers.pop().q;
+    renderQuestion();
+  }
+
+  // Rebuild the answer path for a result (used for shared links), by walking the tree.
+  function pathTo(index){
+    const target = -(index + 1);
+    const stack = [[1, []]];
+    while (stack.length){
+      const [q, path] = stack.pop();
+      const [, , na, , nb] = Q[q - 1];
+      for (const [pick, next] of [['A', na], ['B', nb]]){
+        const p = path.concat({ q, pick });
+        if (next === target) return p;
+        if (next > 0) stack.push([next, p]);
+      }
+    }
+    return [];
+  }
+
+  function showResult(index, path){
+    const r = R[index];
+    const shared = path === null;
+    if (shared) path = pathTo(index);
+
+    $('result-eyebrow').textContent = shared ? 'A quiz result' : 'You are…';
+    $('result-name').textContent = r.n;
+    $('result-dex').textContent = '#' + String(r.d).padStart(4, '0') + ' · ' + r.q + ' questions';
+
+    const formLabel = FORM_LABELS[r.f] || '';
+    $('result-chips').innerHTML =
+      r.t.split(' / ').map(t =>
+        `<span class="chip" style="background:${TYPE_COLOURS[t] || '#ccc'}">${t}</span>`).join('') +
+      (formLabel ? `<span class="chip form">${formLabel}</span>` : '');
+    $('result-vibe').textContent = r.v;
+    const blurb = $('result-blurb');
+    blurb.textContent = (typeof BLURBS !== 'undefined' && BLURBS[r.n]) || '';
+    blurb.hidden = !blurb.textContent;
+
+    const slot = $('sprite-slot');
+    const note = $('sprite-note');
+    if (r.s){
+      // Megas use official artwork (sprites/mega/*.webp); everything else is pixel art
+      const art = r.s.startsWith('mega/');
+      slot.innerHTML = `<img class="sprite${art ? ' art' : ''}" src="sprites/${r.s}" alt="${r.n} ${art ? 'artwork' : 'sprite'}">`;
+    } else {
+      slot.innerHTML = `
+        <svg class="sprite-missing" viewBox="0 0 64 64" aria-label="No sprite available">
+          <circle cx="32" cy="32" r="27" fill="none" stroke="#f4d58d" stroke-opacity="0.55" stroke-width="2.5"/>
+          <path d="M5 32h18M41 32h18" stroke="#f4d58d" stroke-opacity="0.55" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="8" fill="none" stroke="#f4d58d" stroke-opacity="0.8" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="3" fill="#fff4d6"/>
+        </svg>`;
+    }
+    if (!r.s){
+      note.hidden = false;
+      note.textContent = 'No sprite for this one yet.';
+    } else if (!r.x){
+      note.hidden = false;
+      note.textContent = `No ${formLabel ? formLabel.toLowerCase() + ' ' : ''}sprite yet, so this is the regular form.`;
+    } else {
+      note.hidden = true;
+    }
+
+    $('path-list').innerHTML = path.map(() => '<li><span class="pq"></span><span class="pa"></span></li>').join('');
+    [...$('path-list').children].forEach((li, i) => {
+      const { q, pick } = path[i];
+      const [text, a, , b] = Q[q - 1];
+      li.querySelector('.pq').textContent = text;
+      li.querySelector('.pa').textContent = pick === 'A' ? a : b;
+    });
+
+    show($('screen-result'));
+  }
+
+  function start(){
+    current = 1;
+    answers = [];
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    renderQuestion();
+    show($('screen-quiz'));
+  }
+
+  $('start-btn').addEventListener('click', start);
+  $('retake-btn').addEventListener('click', start);
+  $('choice-a').addEventListener('click', () => choose('A'));
+  $('choice-b').addEventListener('click', () => choose('B'));
+  $('back-btn').addEventListener('click', back);
+  $('share-btn').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      $('copied').classList.add('show');
+      setTimeout(() => $('copied').classList.remove('show'), 1800);
+    } catch (e) {
+      prompt('Copy this link:', location.href);
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!$('screen-quiz').classList.contains('active') || e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (k === 'a' || k === '1') choose('A');
+    else if (k === 'b' || k === '2') choose('B');
+    else if (k === 'backspace') { e.preventDefault(); back(); }
+  });
+
+  // Shared link: open straight on that result.
+  const fromHash = bySlug.get(decodeURIComponent(location.hash.slice(1)));
+  if (fromHash !== undefined) showResult(fromHash, null);
+})();
+</script>
+
+</body>
+</html>

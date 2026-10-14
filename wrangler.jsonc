@@ -22,6 +22,7 @@
       "board.leahcrhunter.com": "corkboard",
       "ocean.leahcrhunter.com": "ocean",
       "calc.leahcrhunter.com":  "calc",
+      "pokemon.leahcrhunter.com": "pokemon-quiz",
       "kitchen.leahcrhunter.com": "kitchen",
       "stream.leahcrhunter.com":  "stream",
       "logs.leahcrhunter.com":    "logs"
@@ -35,6 +36,7 @@
     { "pattern": "board.leahcrhunter.com", "custom_domain": true },
     { "pattern": "ocean.leahcrhunter.com", "custom_domain": true },
     { "pattern": "calc.leahcrhunter.com",  "custom_domain": true },
+    { "pattern": "pokemon.leahcrhunter.com", "custom_domain": true },
     { "pattern": "kitchen.leahcrhunter.com", "custom_domain": true },
     { "pattern": "logs.leahcrhunter.com",    "custom_domain": true },
     // Not a custom domain: stream's DNS record points at the video server, and

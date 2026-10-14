@@ -12,6 +12,7 @@ them, picking the folder by hostname.
 | `sites/corkboard/`                | https://board.leahcrhunter.com   | Interactive corkboard: notes, lists, photos, stickers — see its [README](sites/corkboard/README.md) |
 | `sites/ocean/`                    | https://ocean.leahcrhunter.com   | The Five Factor Snapshot — a Big Five (OCEAN) self-reflection quiz |
 | `sites/calc/`                     | https://calc.leahcrhunter.com    | Pokémon Champions (VGC) damage calculator — see its [README](sites/calc/README.md) |
+| `sites/pokemon-quiz/`             | https://pokemon.leahcrhunter.com | Which Pokémon Are You? — a branching personality quiz with 1,231 results — see its [README](sites/pokemon-quiz/README.md) |
 | `sites/kitchen/`                  | https://kitchen.leahcrhunter.com | Private project, password protected |
 | `sites/stream/`                   | https://stream.leahcrhunter.com  | Private project, password protected |
 | `sites/logs/`                     | https://logs.leahcrhunter.com    | Private project, password protected |
@@ -25,6 +26,7 @@ wrangler.jsonc   — the Worker config: hostname → folder map, custom domains
 src/index.js     — ~20 lines: rewrites cv.leahcrhunter.com/x → /cv/x and serves it
 src/kitchen/     — login and /api/ for kitchen.leahcrhunter.com (the one site with a backend)
 migrations/      — D1 database schema (kitchen)
+scripts/         — one-off helpers (kitchen password, Pokémon quiz data generator)
 sites/           — the public files; every folder here is one site
 ```
 
@@ -81,6 +83,10 @@ stays under its owners' terms:
   [`sites/calc/SMOGON-CALC-LICENSE`](sites/calc/SMOGON-CALC-LICENSE).
 - `sites/calc/usage-mc.json`, `learnsets-mc.json` and `regulation-mc.json`:
   data compiled from Pikalytics and Serebii.
+- `sites/pokemon-quiz/sprites/`: gen 5 sprites from
+  [Pokémon Showdown](https://play.pokemonshowdown.com/sprites/gen5/).
+- `sites/pokemon-quiz/sprites/mega/`: official Pokémon artwork via
+  [Serebii](https://www.serebii.net/pokemon/megaevolution.shtml).
 - Pokémon names and game data are © Nintendo / Creatures / GAME FREAK; this
   project is unofficial and not affiliated with them.
 - PeerJS and any other library loaded from a CDN is under its own licence.
